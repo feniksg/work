@@ -61,7 +61,7 @@ def get_orders():
         r = get(url=f'{BASE_URL}{url_api}',headers=HEADERS, json= body).json()['rows']
         data+=r
     res = []
-    for order in data[0:10]:
+    for order in data:
         id = order['name']
         sum = order['sum']
         state = _get_metastate(order['state']['meta']['href'])
@@ -73,11 +73,11 @@ def get_orders():
         try:
             rent_start = _get_rent_start(order['attributes'])
         except:
-            rent_start = ''
+            continue
         try:
             rent_end = _get_rent_end(order['attributes'])
         except:
-            rent_end = ''
+            continue
         positions = _get_positions(order['positions']['meta']['href'])
         res.append([id,fio,phone,state,rent_start,rent_end, sum, positions])
     return res
