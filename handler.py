@@ -10,15 +10,17 @@ def get_all_rents():
     return cursor.fetchall()
 
 
-def save_all_rents(list_rents):
+def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
     changed_fields = {}
     for this_rent in list_rents:
         sql = '''
             WITH ins AS (
-                INSERT INTO my_stock (id_rent, status_rent, first_datetime_rent, second_datetime_rent, price_rent, id_product) 
-                VALUES (%s, %s, %s, %s, %s, %s) 
+                INSERT INTO my_stock (id_rent, fio_rent, phone_rent, status_rent, first_datetime_rent, second_datetime_rent, price_rent, id_product) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) 
                 ON CONFLICT ON CONSTRAINT id_rent_unique 
                 DO UPDATE SET
+                    fio_rent = excluded.fio_rent,
+                    phone_rent = excluded.phone_rent,
                     status_rent = excluded.status_rent,
                     first_datetime_rent = excluded.first_datetime_rent,
                     second_datetime_rent = excluded.second_datetime_rent,
@@ -44,22 +46,22 @@ def save_all_rents(list_rents):
                 changed_fields[changed_field_db[0][1]] = this_rent
     
     for changed_field in changed_fields.items():
-        if changed_field[1][1] == "ЗАБРОНИРОВАННО" and changed_field[0] == "В АРЕНДЕ":
+        if changed_field[1][1] == "Забронирована" and changed_field[0] == "В аренде":
             ...
-        elif changed_field[1][1] == "В АРЕНДЕ" and changed_field[0] == "В АРЕНДЕ ОПЛАЧЕНО":
+        elif changed_field[1][1] == "В аренде" and changed_field[0] == "В аренде, оплачено":
             ...
-        elif changed_field[1][1] == "В АРЕНДЕ ОПЛАЧЕНО" and changed_field[0] == "ЗАДЕРЖИВАЕТСЯ":
+        elif changed_field[1][1] == "В аренде, оплачено" and changed_field[0] == "Задерживается":
             ...
-        elif changed_field[1][1] == "ЗАДЕРЖИВАЕТСЯ" and changed_field[0] == "СДАНО":
+        elif changed_field[1][1] == "Задерживается" and changed_field[0] == "Сдано":
             ...
         else:
             ...
 
 
-def check_timeout():
+def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = "UPDATE my_stock SET status_rent = 'ЗАДЕРЖИВАЕТСЯ' WHERE second_datetime_rent < %s AND status_rent = 'В АРЕНДЕ' RETURNING *"
+    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent = 'В аренде' RETURNING *"
     cursor.execute(sql, (current_datetime,))
 
     updated_rows = cursor.fetchall()
@@ -69,21 +71,37 @@ def check_timeout():
     conn.commit()
 
 
-def update_status(id_order, new_status):
-    sql = '''UPDATE my_stock SET status_rent = %s WHERE id_rent = %s'''
-    cursor.execute(sql, (new_status, id_order))
-    conn.commit()
+# def update_status(id_order, new_status):
+#     sql = '''UPDATE my_stock SET status_rent = %s WHERE id_rent = %s'''
+#     cursor.execute(sql, (new_status, id_order))
+#     conn.commit()
 
 
-def activ_rents():
-    ...
+def activ_rents(): # TODO Запуск каждые 5 минут
+    current_datetime = datetime.now()
+
+    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Сдано'"
+    cursor.execute(sql, (current_datetime, current_datetime))
+    result = cursor.fetchall()
+    dict_products = {}
+    for order in result:
+        for product_id in order[-1]:
+            if product_id in dict_products:
+                dict_products[product_id] += [{"start_datetime": order[5], "end_datetime": order[6], "full_name": order[2], "phone": order[3]}]
+            else:
+                dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "FIO": order[2], "phone": order[3]}]
+    return dict_products
 
 
 if __name__ == "__main__":
-    current_time = datetime.now()
-    current_time.strftime('%Y-%m-%d %H:%M:%S')
-    list_rents = [["23412", "В АРЕНДЕ", current_time, current_time, "1233", [3543, 6532]]]
-    print(save_all_rents(list_rents))
-    print(get_all_rents())
-    check_timeout()
+    current_time_1 = datetime(year=2021, month=1, day=3)
+    current_time_1.strftime('%Y-%m-%d %H:%M:%S')
+    current_time_2 = datetime(year=2025, month=1, day=3)
+    current_time_2.strftime('%Y-%m-%d %H:%M:%S')
+
+    list_rents = [["234", "Адрей", "+79992609773", "В аренде", current_time_1, current_time_2, "1233", [3543, 6532, 5853]]]
+    # print(save_all_rents(list_rents))
+    # print(get_all_rents())
+    # check_timeout()
+    print(activ_rents())
 
