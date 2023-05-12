@@ -191,7 +191,7 @@ def set_all_free():
     
     url = 'https://online.moysklad.ru/api/remap/1.2/entity/product'
     n = len(data) // 1000
-    print(n)
+    # print(n)
     for i in range(n):
         r = post(url=url, headers=HEADERS, json=data[1000*i:1000*(i+1)])
     r = post(url=url, headers=HEADERS, json=data[1000*(i+1):])    
