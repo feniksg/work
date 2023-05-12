@@ -90,6 +90,8 @@ def activ_rents(): # TODO Запуск каждые 5 минут
                 dict_products[product_id] += [{"start_datetime": order[5], "end_datetime": order[6], "full_name": order[2], "phone": order[3]}]
             else:
                 dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "FIO": order[2], "phone": order[3]}]
+    
+    dict_products = sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime'])
     return dict_products
 
 

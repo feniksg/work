@@ -1,7 +1,6 @@
 ﻿from requests import put,get,post
 from states import states_order
 import json, time
-from test import data
 
 MY_STORAGE_TOKEN = 'fe41eff96185254e5fb3c54d18b183127c594243'
 
