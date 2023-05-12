@@ -1,5 +1,5 @@
 from handler import save_all_rents, update_status
-from ms import get_orders
+from ms import get_orders, put_main_data
 
 
 def upload_all_orders():
@@ -8,6 +8,5 @@ def upload_all_orders():
 
 
 def check_info_request(link):
-    ...
-    id_order, new_status = link
+    id_order, new_status = put_main_data(link)
     update_status(id_order, new_status)

@@ -150,8 +150,64 @@ def set_product_comment(id_product, comment):
     else:
         return 'ERROR'
 
-def write_active_rents(data: dict):
+def set_all_free():
+    url = f'{BASE_URL}entity/product'
+    body = {
+        'offset': 0
+    }
+    data = []
+    response = get(url=url, headers=HEADERS, json=body).json()
+    data+=response['rows']
+    while len(response['rows']) == 1000:
+        body['offset']+=1000
+        response = get(url=f'{url}/?offset={body["offset"]}', headers=HEADERS, json=body).json()
+        data+=response['rows']
     
+    href_list = []
+    for line in data:
+        href_list.append(line['meta']['href'])
+    
+    data = []
+
+    for href in href_list:
+        data.append({
+            "meta": {
+                "href": href,
+                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata",
+                "type": "product",
+                "mediaType": "application/json"
+            },
+            "attributes":[ 
+            {
+               "meta": {
+                "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/eb2ea822-e9cf-11ed-0a80-1108005d077a",
+                "type": "attributemetadata",
+                "mediaType": "application/json"
+                },
+                'value': 'Да'
+            }
+            ]
+        })
+    
+    url = 'https://online.moysklad.ru/api/remap/1.2/entity/product'
+    n = len(data) // 1000
+    print(n)
+    for i in range(n):
+        r = post(url=url, headers=HEADERS, json=data[1000*i:1000*(i+1)])
+    r = post(url=url, headers=HEADERS, json=data[1000*(i+1):])    
+    if r.status_code == 200:
+        return 'OK'
+    else:
+        return 'ERROR'
+
+def put_main_data(link):
+    r = get(url=link, headers=HEADERS).json()
+    name = r['name']
+    state = _get_metastate(r['state']['meta']['href'])
+    return name, state
+
+def write_active_rents(data: dict):
+    set_all_free()
     for product in data.keys():
         lines = data[product]
         text = ''
@@ -163,16 +219,53 @@ def write_active_rents(data: dict):
             text+=f'{start} - {end} | {fio} | {phone}\n'
         set_product_comment(product, text)
         set_free(product, False)
-        # print(product)
-        # print(text)
-
-
+        
+def leftovers_plus(id_product):
+    url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
+    response = get(url=url, headers=HEADERS)
+    if response.status_code == 200:
+        product = response.json()['rows'][0]['meta']['href']
+    body = {
+        'name': str(time.time())[:-3],
+        'organization':{       
+            "meta": {
+                "href": "https://online.moysklad.ru/api/remap/1.2/entity/organization/924346d3-6543-11eb-0a80-07f1000909a0",
+                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
+                "type": "organization",
+                "mediaType": "application/json",
+                "uuidHref": "https://online.moysklad.ru/app/#mycompany/edit?id=924346d3-6543-11eb-0a80-07f1000909a0"
+            }
+        },
+        'store': {
+            "meta": {
+                "href": "https://online.moysklad.ru/api/remap/1.2/entity/store/92608a7b-6543-11eb-0a80-07f1000909a5",
+                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/store/metadata",
+                "type": "store",
+                "mediaType": "application/json",
+                "uuidHref": "https://online.moysklad.ru/app/#warehouse/edit?id=92608a7b-6543-11eb-0a80-07f1000909a5"
+            }
+        },
+        'positions': [
+            {
+                'quantity': 1,
+                'price': 0,
+                'assortment': {
+                    "meta": {
+                        "href": product,
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata",
+                        "type": "product",
+                        "mediaType": "application/json"
+                    }
+                }
+            }
+        ]
+    }
+    url = 'https://online.moysklad.ru/api/remap/1.2/entity/enter'
+    r = post(url = url, headers=HEADERS, json=body)
+    if r.status_code == 200:
+        return 'OK'
+    else:
+        return 'ERROR'
 
 if __name__ == '__main__':
-    # start = time.time()
-    # data = get_orders()
-    # print(len(data))
-    # with open('output.json', 'w+', encoding='utf-8') as f:
-    #     json.dump(data, f, indent=2, ensure_ascii=False)
-    # print(time.time()-start)
-    write_active_rents(data)
+    ...
