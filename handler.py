@@ -61,7 +61,7 @@ def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
 def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent = 'В аренде' RETURNING *"
+    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent = 'В аренде, оплачен' RETURNING *"
     cursor.execute(sql, (current_datetime,))
 
     updated_rows = cursor.fetchall()
