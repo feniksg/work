@@ -1,32 +1,32 @@
 ﻿from ms import MY_STORAGE_TOKEN
 from requests import post, get
 
-def link_webhook(target, type = 'product'):
+def link_webhook(target, type = 'customerorder'):
     headers = {
         "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
         "Content-Type": "application/json"
     }
     body = {
-        "url": f'{target}/create',
+        "url": f'{target}/create/',
         "action": "CREATE",
         "entityType": type
     }
     url = "https://online.moysklad.ru/api/remap/1.2/entity/webhook"
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
-        print("[Product Create] Webhook created")
+        print("[Create] Webhook created")
     else:
-        print("[Product Create] Webhook creation failed", r.status_code)
+        print("[Create] Webhook creation failed", r.status_code)
     body = {
-        "url": f'{target}/update',
+        "url": f'{target}/update/',
         "action": "UPDATE",
         "entityType": type
     }
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
-        print("[Product Update] Webhook created")
+        print("[Update] Webhook created")
     else:
-        print("[Product Update] Webhook creation failed", r.status_code)
+        print("[Update] Webhook creation failed", r.status_code)
     
 def delete_webhooks():
     headers = {
