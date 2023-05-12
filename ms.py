@@ -200,11 +200,29 @@ def set_all_free():
     else:
         return 'ERROR'
 
-def put_main_data(link):
+def put_main_data(link, type):
     r = get(url=link, headers=HEADERS).json()
-    name = r['name']
+    id = r['name']
+    sum = r['sum']
     state = _get_metastate(r['state']['meta']['href'])
-    return name, state
+    try:
+        phone = _get_metaphone(r['attributes'])
+    except:
+        phone = ''
+    fio = str(_get_metafio(r['agent']['meta']['href'])).encode().decode('utf-8')
+    try:
+        rent_start = _get_rent_start(r['attributes'])
+    except:
+        rent_start = ''
+    try:
+        rent_end = _get_rent_end(r['attributes'])
+    except:
+        rent_end = ''
+    positions = _get_positions(r['positions']['meta']['href'])
+    if type == 'update':
+        return id, state
+    elif type == 'create':
+        return [id,fio,phone,state,rent_start,rent_end, sum, positions]
 
 def write_active_rents(data: dict):
     set_all_free()
