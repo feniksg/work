@@ -1,4 +1,4 @@
-from handler import save_all_rents, update_status, create_order
+from handler import save_all_rents, update_status
 from ms import get_orders, put_main_data
 
 
@@ -12,3 +12,7 @@ def check_info_request(link, type):
         update_status(put_main_data(link, type))
     elif type == "create":
         save_all_rents(put_main_data(link, type))
+
+
+if __name__ == "__main__":
+    upload_all_orders()

@@ -111,14 +111,9 @@ def activ_rents(): # TODO Запуск каждые 5 минут
 
 
 if __name__ == "__main__":
-    current_time_1 = datetime(year=2021, month=1, day=3)
-    current_time_1.strftime('%Y-%m-%d %H:%M:%S')
-    current_time_2 = datetime(year=2025, month=1, day=3)
-    current_time_2.strftime('%Y-%m-%d %H:%M:%S')
 
-    list_rents = [["234", "Адрей", "+79992609773", "В аренде", current_time_1, current_time_2, "1233", [3543, 6532, 5853]]]
     # print(save_all_rents(list_rents))
-    # print(get_all_rents())
+    print(get_all_rents())
     # check_timeout()
-    print(activ_rents())
+    # print(activ_rents())
 
