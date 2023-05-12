@@ -71,10 +71,10 @@ def check_timeout(): # TODO Запуск каждую минуту
     conn.commit()
 
 
-# def update_status(id_order, new_status):
-#     sql = '''UPDATE my_stock SET status_rent = %s WHERE id_rent = %s'''
-#     cursor.execute(sql, (new_status, id_order))
-#     conn.commit()
+def update_status(id_order, new_status):
+    sql = '''UPDATE my_stock SET status_rent = %s WHERE id_rent = %s'''
+    cursor.execute(sql, (new_status, id_order))
+    conn.commit()
 
 
 def activ_rents(): # TODO Запуск каждые 5 минут
