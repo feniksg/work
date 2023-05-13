@@ -1,7 +1,7 @@
 from db import conn, cursor
 from datetime import datetime
 
-from request_post_my_stock import update_status_order
+from request_post_my_stock import update_status_order, change_active_rents, change_amount_product
 
 
 def get_all_rents():
@@ -76,6 +76,21 @@ def update_status(id_order, new_status):
     cursor.execute(sql, (new_status, id_order))
     conn.commit()
 
+    sql = "SELECT * FROM my_stock WHERE id_rent = %s"
+    cursor.execute(sql, (id_order,))
+
+    if new_status == "В аренде" or new_status == "В аренде, оплачено":
+        for product in cursor.fetchall()[-1]:
+            change_amount_product(product)
+   
+
+# def create_order(id_rent, fio_rent, phone_rent, status_rent, first_datetime_rent, second_datetime_rent, price_rent, id_product):
+#     sql = '''
+#             WITH ins AS (
+#                 INSERT INTO my_stock (id_rent, fio_rent, phone_rent, status_rent, first_datetime_rent, second_datetime_rent, price_rent, id_product) 
+#                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+#         '''
+
 
 def activ_rents(): # TODO Запуск каждые 5 минут
     current_datetime = datetime.now()
@@ -92,18 +107,13 @@ def activ_rents(): # TODO Запуск каждые 5 минут
                 dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "FIO": order[2], "phone": order[3]}]
     
     dict_products = sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime'])
-    return dict_products
+    return change_active_rents(dict_products)
 
 
 if __name__ == "__main__":
-    current_time_1 = datetime(year=2021, month=1, day=3)
-    current_time_1.strftime('%Y-%m-%d %H:%M:%S')
-    current_time_2 = datetime(year=2025, month=1, day=3)
-    current_time_2.strftime('%Y-%m-%d %H:%M:%S')
 
-    list_rents = [["234", "Адрей", "+79992609773", "В аренде", current_time_1, current_time_2, "1233", [3543, 6532, 5853]]]
     # print(save_all_rents(list_rents))
-    # print(get_all_rents())
+    print(get_all_rents())
     # check_timeout()
-    print(activ_rents())
+    # print(activ_rents())
 
