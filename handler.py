@@ -1,7 +1,8 @@
+from request_post_my_stock import update_status_order, change_active_rents, change_amount_product
 from db import conn, cursor
 from datetime import datetime
 
-from request_post_my_stock import update_status_order, change_active_rents, change_amount_product
+import time
 
 
 def get_all_rents():
@@ -46,14 +47,23 @@ def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
                 changed_fields[changed_field_db[0][1]] = this_rent
     
     for changed_field in changed_fields.items():
-        if changed_field[1][1] == "Забронирована" and changed_field[0] == "В аренде":
+        if changed_field[1][4] == "Забронирована" and changed_field[0] == "В аренде":
+            for product in changed_field[1][-1]:
+                change_amount_product(product)
+                
+        elif changed_field[1][4] == "В аренде" and changed_field[0] == "В аренде, оплачено":
+            for product in changed_field[1][-1]:
+                change_amount_product(product)
+   
+        elif changed_field[1][4] == "В аренде, оплачено" and changed_field[0] == "Задерживается":
             ...
-        elif changed_field[1][1] == "В аренде" and changed_field[0] == "В аренде, оплачено":
+
+        elif changed_field[1][4] == "В аренде, оплачено" and changed_field[0] == "Сдано":
             ...
-        elif changed_field[1][1] == "В аренде, оплачено" and changed_field[0] == "Задерживается":
+
+        elif changed_field[1][4] == "Задерживается" and changed_field[0] == "Сдано":
             ...
-        elif changed_field[1][1] == "Задерживается" and changed_field[0] == "Сдано":
-            ...
+
         else:
             ...
 
@@ -61,12 +71,13 @@ def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
 def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent = 'В аренде, оплачен' RETURNING *"
+    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent <> 'Сдано' RETURNING *"
     cursor.execute(sql, (current_datetime,))
 
     updated_rows = cursor.fetchall()
     for row in updated_rows:
-        update_status_order(row[1], row[2])
+        print(row)
+        update_status_order(row[1], row[4])
 
     conn.commit()
 
@@ -102,18 +113,22 @@ def activ_rents(): # TODO Запуск каждые 5 минут
     for order in result:
         for product_id in order[-1]:
             if product_id in dict_products:
-                dict_products[product_id] += [{"start_datetime": order[5], "end_datetime": order[6], "full_name": order[2], "phone": order[3]}]
+                dict_products[product_id] += [{"start_datetime": order[5], "end_datetime": order[6], "fio_rent": order[2], "phone_rent": order[3]}]
             else:
-                dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "FIO": order[2], "phone": order[3]}]
+                dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "fio_rent": order[2], "phone_rent": order[3]}]
     
-    dict_products = sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime'])
+    dict_products = dict(sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime']))
     return change_active_rents(dict_products)
 
-
+        
+ 
 if __name__ == "__main__":
-
-    # print(save_all_rents(list_rents))
-    print(get_all_rents())
+    # goods = get_all_rents()
+    # for good in goods:
+    #     if good[3] == "899926097731223":
+    #         print(good)
     # check_timeout()
-    # print(activ_rents())
+    start = time.time()
+    print(check_timeout())
+    print(time.time()-start)
 

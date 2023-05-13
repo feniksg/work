@@ -8,13 +8,13 @@ app = FastAPI(debug=True)
 @app.post("/create")
 async def root(request: Request):
     data = await request.json()
-    return check_info_request(data["events"][0]["meta"]["href"], "create")
+    return check_info_request(data["events"][0]["meta"]["href"])
 
 
 @app.post("/update")
 async def root(request: Request):
     data = await request.json()
-    return check_info_request(data["events"][0]["meta"]["href"], "update")
+    return check_info_request(data["events"][0]["meta"]["href"])
 
 
 if __name__ == "__main__":

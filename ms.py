@@ -219,7 +219,7 @@ def put_main_data(link):
     except:
         rent_end = ''
     positions = _get_positions(r['positions']['meta']['href'])
-    return [id,fio,phone,state,rent_start,rent_end, sum, positions]
+    return [[id,fio,phone,state,rent_start,rent_end, sum, positions]]
 
 def write_active_rents(data: dict):
     set_all_free()
@@ -229,8 +229,8 @@ def write_active_rents(data: dict):
         for comment in lines:
             start = str(comment['start_datetime'])[:-3]
             end = str(comment['end_datetime'])[:-3]
-            fio = comment['FIO']
-            phone = comment['phone']
+            fio = comment['fio_rent']
+            phone = comment['phone_rent']
             text+=f'{start} - {end} | {fio} | {phone}\n'
         set_product_comment(product, text)
         set_free(product, False)
