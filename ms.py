@@ -200,7 +200,7 @@ def set_all_free():
     else:
         return 'ERROR'
 
-def put_main_data(link, type):
+def put_main_data(link):
     r = get(url=link, headers=HEADERS).json()
     id = r['name']
     sum = r['sum']
@@ -219,10 +219,7 @@ def put_main_data(link, type):
     except:
         rent_end = ''
     positions = _get_positions(r['positions']['meta']['href'])
-    if type == 'update':
-        return id, state
-    elif type == 'create':
-        return [id,fio,phone,state,rent_start,rent_end, sum, positions]
+    return [id,fio,phone,state,rent_start,rent_end, sum, positions]
 
 def write_active_rents(data: dict):
     set_all_free()
