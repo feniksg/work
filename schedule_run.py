@@ -33,6 +33,6 @@ if __name__ == "__main__":
     activ_rents_thread = threading.Thread(target=activ_rents_schedule, args=(500,))
     activ_rents_thread.start()
  
-    check_timeout_thread = threading.Thread(target=check_timeout_schedule, args=(60,))
+    check_timeout_thread = threading.Thread(target=check_timeout_schedule, args=(500,))
     check_timeout_thread.start()
  

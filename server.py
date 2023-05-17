@@ -5,18 +5,18 @@ import uvicorn
 app = FastAPI(debug=True)
 
 
-@app.post("/create")
+@app.post("/create/")
 async def root(request: Request):
     data = await request.json()
     return check_info_request(data["events"][0]["meta"]["href"])
 
 
-@app.post("/update")
+@app.post("/update/")
 async def root(request: Request):
     data = await request.json()
     return check_info_request(data["events"][0]["meta"]["href"])
 
-@app.post('/payment')
+@app.post('/payment/')
 async def root(request: Request):
     data = await request.json()
     return check_payment_request(data["events"][0]["meta"]["href"])

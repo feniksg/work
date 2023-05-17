@@ -10,20 +10,26 @@ def get_all_rents():
     cursor.execute(sql)
     return cursor.fetchall()
 
-def check_order(data: list[list]) -> None:
+def check_order(data):
     data = data[0]
     order_id = data[0]
     start = data[4]
     end = data[5]
     if start != '' and end !='':
-        update_status_order(order_id, 'В аренде, оплачено') 
-        update_status(order_id, 'В аренде, оплачено')
+        new_status = "Сдано"
+        if check_status(order_id)[0][4] == "Забронирована":
+            new_status = "В аренде"
+        elif check_status(order_id)[0][4] == "В аренде":
+            new_status = "В аренде, оплачено"
+
+        update_status_order(order_id, new_status) 
+        update_status(order_id, new_status)
     else:
         update_status_order(order_id, 'Продано') #установить нужный статус
         update_status(order_id, 'Продано') #установить нужный статус
 
 
-def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
+def save_all_rents(list_rents): 
     changed_fields = {}
     for this_rent in list_rents:
         sql = '''
@@ -60,8 +66,9 @@ def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
     
     for changed_field in changed_fields.items():
         if changed_field[1][4] == "Забронирована" and changed_field[0] == "В аренде":
-            for product in changed_field[1][-1]:
-                change_amount_product(product)
+            ...
+            # for product in changed_field[1][-1]:
+            #     change_amount_product(product)
                 
         elif changed_field[1][4] == "В аренде" and changed_field[0] == "В аренде, оплачено":
             for product in changed_field[1][-1]:
@@ -94,6 +101,13 @@ def check_timeout(): # TODO Запуск каждую минуту
     conn.commit()
 
 
+def check_status(id_order):
+    sql = '''SELECT * FROM my_stock WHERE id_rent = %s'''
+    cursor.execute(sql, (id_order,))
+
+    return cursor.fetchall()
+
+
 def update_status(id_order, new_status):
     sql = '''UPDATE my_stock SET status_rent = %s WHERE id_rent = %s'''
     cursor.execute(sql, (new_status, id_order))
@@ -102,8 +116,8 @@ def update_status(id_order, new_status):
     sql = "SELECT * FROM my_stock WHERE id_rent = %s"
     cursor.execute(sql, (id_order,))
 
-    if new_status == "В аренде" or new_status == "В аренде, оплачено":
-        for product in cursor.fetchall()[-1]:
+    if new_status == "В аренде, оплачено":
+        for product in cursor.fetchall()[0][-1]:
             change_amount_product(product)
    
 
@@ -135,10 +149,6 @@ def activ_rents(): # TODO Запуск каждые 5 минут
         
  
 if __name__ == "__main__":
-    # goods = get_all_rents()
-    # for good in goods:
-    #     if good[3] == "899926097731223":
-    #         print(good)
     # check_timeout()
     start = time.time()
     print(check_timeout())

@@ -82,7 +82,7 @@ def get_orders():
         res.append([id,fio,phone,state,rent_start,rent_end, sum, positions])
     return res
 
-def get_link_from_payment(link: str) -> str | None: 
+def get_link_from_payment(link: str) -> str: 
     responce = get(url=link, headers=HEADERS)
     if responce.status_code == 200:
         return responce.json()['operations'][0]['meta']['href']
