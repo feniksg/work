@@ -8,10 +8,10 @@ BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
 
 HEADERS = {"Authorization": f"Bearer {MY_STORAGE_TOKEN}","Content-Type": "application/json", 'encoding': 'utf-8'}
 
-def _get_metastate(url):
+def _get_metastate(url: str) -> dict:
     return get(url,headers=HEADERS).json()['name']
 
-def _get_metaphone(attributes):
+def _get_metaphone(attributes) -> str:
     for item in attributes:
         if item['id'] == '327fa9ce-d787-11ed-0a80-01390030e9ad':
             return item['value']
@@ -81,6 +81,13 @@ def get_orders():
         positions = _get_positions(order['positions']['meta']['href'])
         res.append([id,fio,phone,state,rent_start,rent_end, sum, positions])
     return res
+
+def get_link_from_payment(link: str) -> str | None: 
+    responce = get(url=link, headers=HEADERS)
+    if responce.status_code == 200:
+        return responce.json()['operations'][0]['meta']['href']
+    else:
+        return None
 
 def set_state(id_order, new_state):
     url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'

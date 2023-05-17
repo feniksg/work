@@ -28,6 +28,23 @@ def link_webhook(target, type = 'customerorder'):
     else:
         print("[Update] Webhook creation failed", r.status_code)
     
+    type = 'paymentin'
+    headers = {
+        "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    body = {
+        "url": f'{target}/payment/',
+        "action": "CREATE",
+        "entityType": type
+    }
+    url = "https://online.moysklad.ru/api/remap/1.2/entity/webhook"
+    r = post(url = url, headers=headers, json = body)
+    if r.status_code == 200:
+        print("[Payment] Webhook created")
+    else:
+        print("[Payment] Webhook creation failed", r.status_code)
+
 def delete_webhooks():
     headers = {
         "Authorization": f"Bearer {MY_STORAGE_TOKEN}",

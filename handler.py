@@ -10,6 +10,18 @@ def get_all_rents():
     cursor.execute(sql)
     return cursor.fetchall()
 
+def check_order(data: list[list]) -> None:
+    data = data[0]
+    order_id = data[0]
+    start = data[4]
+    end = data[5]
+    if start != '' and end !='':
+        update_status_order(order_id, 'В аренде, оплачено') 
+        update_status(order_id, 'В аренде, оплачено')
+    else:
+        update_status_order(order_id, 'Продано') #установить нужный статус
+        update_status(order_id, 'Продано') #установить нужный статус
+
 
 def save_all_rents(list_rents): # TODO Запуск каждые 5 минут
     changed_fields = {}

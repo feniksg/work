@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from request_get_my_stock import check_info_request
+from request_get_my_stock import check_info_request, check_payment_request
 import uvicorn
 
 app = FastAPI(debug=True)
@@ -15,6 +15,11 @@ async def root(request: Request):
 async def root(request: Request):
     data = await request.json()
     return check_info_request(data["events"][0]["meta"]["href"])
+
+@app.post('/payment')
+async def root(request: Request):
+    data = await request.json()
+    return check_payment_request(data["events"][0]["meta"]["href"])
 
 
 if __name__ == "__main__":
