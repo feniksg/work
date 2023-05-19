@@ -19,8 +19,6 @@ def check_order(data):
         new_status = "Сдано"
         if check_status(order_id)[0][4] == "Забронирована":
             new_status = "В аренде"
-        elif check_status(order_id)[0][4] == "В аренде":
-            new_status = "В аренде, оплачено"
 
         update_status_order(order_id, new_status) 
         update_status(order_id, new_status)
@@ -66,18 +64,13 @@ def save_all_rents(list_rents):
     
     for changed_field in changed_fields.items():
         if changed_field[1][4] == "Забронирована" and changed_field[0] == "В аренде":
-            ...
-            # for product in changed_field[1][-1]:
-            #     change_amount_product(product)
-                
-        elif changed_field[1][4] == "В аренде" and changed_field[0] == "В аренде, оплачено":
             for product in changed_field[1][-1]:
                 change_amount_product(product)
-   
-        elif changed_field[1][4] == "В аренде, оплачено" and changed_field[0] == "Задерживается":
+                
+        elif changed_field[1][4] == "В аренде" and changed_field[0] == "Задерживается":
             ...
 
-        elif changed_field[1][4] == "В аренде, оплачено" and changed_field[0] == "Сдано":
+        elif changed_field[1][4] == "В аренде" and changed_field[0] == "Сдано":
             ...
 
         elif changed_field[1][4] == "Задерживается" and changed_field[0] == "Сдано":
@@ -116,9 +109,9 @@ def update_status(id_order, new_status):
     sql = "SELECT * FROM my_stock WHERE id_rent = %s"
     cursor.execute(sql, (id_order,))
 
-    if new_status == "В аренде, оплачено":
-        for product in cursor.fetchall()[0][-1]:
-            change_amount_product(product)
+    # if new_status == "В аренде":
+    #     for product in cursor.fetchall()[0][-1]:
+    #         change_amount_product(product)
    
 
 # def create_order(id_rent, fio_rent, phone_rent, status_rent, first_datetime_rent, second_datetime_rent, price_rent, id_product):
@@ -149,8 +142,8 @@ def activ_rents(): # TODO Запуск каждые 5 минут
         
  
 if __name__ == "__main__":
-    # check_timeout()
-    start = time.time()
-    print(check_timeout())
-    print(time.time()-start)
+    activ_rents()
+    # start = time.time()
+    # print(check_timeout())
+    # print(time.time()-start)
 
