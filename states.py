@@ -69,20 +69,6 @@
       "stateType": "Successful",
       "entityType": "customerorder"
     },
-    'В аренде, оплачено':{
-      "meta": {
-        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/07e92c60-f0bf-11ed-0a80-042b000fac20",
-        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata",
-        "type": "state",
-        "mediaType": "application/json"
-      },
-      "id": "07e92c60-f0bf-11ed-0a80-042b000fac20",
-      "accountId": "8fe2b222-6543-11eb-0a80-006a0000435a",
-      "name": "В аренде, оплачено",
-      "color": 10066329,
-      "stateType": "Regular",
-      "entityType": "customerorder"
-    },
     'Сдано':{
       "meta": {
         "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/07e93006-f0bf-11ed-0a80-042b000fac21",
@@ -96,5 +82,20 @@
       "color": 10066329,
       "stateType": "Regular",
       "entityType": "customerorder"
+    },
+    'Сохранение брони':{
+      "meta": {
+        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/18ab2a74-f59f-11ed-0a80-01c1000059c5",
+        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata",
+        "type": "state",
+        "mediaType": "application/json"
+      },
+      "id": "18ab2a74-f59f-11ed-0a80-01c1000059c5",
+      "accountId": "8fe2b222-6543-11eb-0a80-006a0000435a",
+      "name": "Сохранение брони",
+      "color": 12430848,
+      "stateType": "Regular",
+      "entityType": "customerorder"
     }
+
 }
