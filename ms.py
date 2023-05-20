@@ -40,6 +40,37 @@ def _get_positions(url):
         res.append(int(get(new_url,headers=HEADERS).json()['code']))
     return res
 
+def _get_agent_meta(url):
+    return get(url,headers=HEADERS).json()['agent']['meta']['href']
+
+def create_inpayment(id_order: int, amount: int):
+    url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'
+    response = get(url=url, headers=HEADERS)
+    if response.status_code == 200 and response.json()['rows'] != []:
+        order = response.json()['rows'][0]['meta']['href']
+    else:
+        return None
+    agent = _get_agent_meta(order)
+    data ={
+        "operations": [
+            {
+                "meta": {
+                    "href": order,
+                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata",
+                    "type": "customerorder",
+                    "mediaType": "application/json"
+                }
+            }
+        ],
+    }
+    url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin/new'
+    data = put(url=url, headers=HEADERS, json=data).json()
+    data['operations'][0]['linkedSum'] = amount
+    data['sum'] = amount
+    url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin'
+    response = post(url=url, headers=HEADERS, json=data)
+    return response.status_code == 200
+
 def get_orders():
     
     limit = 1000
