@@ -69,12 +69,6 @@ def check_payments():
             create_inpayment(res[i]['number'][4:], res[i]['amount'])
         save_payments(res)
         
-def schedule_check():
-    schedule.every(20).seconds.do(check_payments)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
 
 if __name__ == '__main__':
     t1 = threading.Thread(target=schedule_check)
