@@ -88,7 +88,7 @@ def check_timeout(): # TODO Запуск каждую минуту
 
     updated_rows = cursor.fetchall()
     for row in updated_rows:
-        print(row)
+        # print(row)
         update_status_order(row[1], row[4])
 
     conn.commit()

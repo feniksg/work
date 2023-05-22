@@ -65,11 +65,12 @@ def check_payments():
         return 'Nothing'
     else:
         for i in out:
-            print(res[i]['number'][4:], res[i]['amount'])
+            # print(res[i]['number'][4:], res[i]['amount'])
             create_inpayment(res[i]['number'][4:], res[i]['amount'])
         save_payments(res)
         
 
 if __name__ == '__main__':
-    t1 = threading.Thread(target=schedule_check)
-    t1.start()
+    ...
+    # t1 = threading.Thread(target=schedule_check)
+    # t1.start()
