@@ -169,6 +169,8 @@ def set_product_comment(id_product, comment):
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200:
         product = response.json()['rows'][0]['meta']['href']
+    else:
+        return 'ERROR'
     body = {
        "attributes":[ 
            {
