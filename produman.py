@@ -7,27 +7,11 @@ PRO_PASSWORD = 'r4frvzf5aw'
 def get_payments():
     url = 'https://kassa.produman.org/order/list/1'
     jar = cookies.RequestsCookieJar()    
-    cookie_list = [
-        {
-            "domain": ".produman.org",
-            "name": "__ddg1_",
-            "path": "/",
-            "value": "o3gceCDPLBphaLMoXLIB",
-        },
-        {
-            "domain": "kassa.produman.org",
-            "name": "PHPSESSID",
-            "path": "/",
-            "sameSite": "unspecified",
-            "value": "9dok0lfk61aab7v2rs1up97ldk",
-        },
-        {
-            "domain": "kassa.produman.org",
-            "name": "REMEMBERME",
-            "path": "/",
-            "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1685208807%3AF6H8EbN67A7ZPnDJy0dNLfCPEA3p0EnAz_cEAepJ9Jk~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~",
-        }
-    ]
+    
+    cookie_list = []
+    with open('cookies_produman.json', 'r', errors='ignore') as f:
+        cookie_list = json.loads(f.read())['cookie_list']
+
     for cookie in cookie_list:
         jar.set(cookie['name'], cookie['value'], domain=cookie['domain'], path=cookie['path'])
     
@@ -71,6 +55,4 @@ def check_payments():
         
 
 if __name__ == '__main__':
-    ...
-    # t1 = threading.Thread(target=schedule_check)
-    # t1.start()
+    print(get_payments())

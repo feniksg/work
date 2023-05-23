@@ -225,6 +225,15 @@ def set_all_free():
                 "mediaType": "application/json"
                 },
                 'value': 'Да'
+            },
+            {
+               "meta": {
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/6f93b889-e9d0-11ed-0a80-00cb005e9834",
+                    "type": "attributemetadata",
+                    "mediaType": "application/json"
+                },
+                "name": "Аренды",
+                "value": ''
             }
             ]
         })

@@ -1,0 +1,23 @@
+{
+    "cookie_list": [
+        {
+            "domain": ".produman.org",
+            "name": "__ddg1_",
+            "path": "/",
+            "value": "o3gceCDPLBphaLMoXLIB"
+        },
+        {
+            "domain": "kassa.produman.org",
+            "name": "PHPSESSID",
+            "path": "/",
+            "sameSite": "unspecified",
+            "value": "9dok0lfk61aab7v2rs1up97ldk"
+        },
+        {
+            "domain": "kassa.produman.org",
+            "name": "REMEMBERME",
+            "path": "/",
+            "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1685208807%3AF6H8EbN67A7ZPnDJy0dNLfCPEA3p0EnAz_cEAepJ9Jk~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~"
+        }
+    ]
+    }
