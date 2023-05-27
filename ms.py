@@ -2,6 +2,20 @@
 from states import states_order
 import json, time
 
+STATES = {
+    'Забронирована': 'Booked',
+    'Отмена': 'Cancel',
+    'В аренде': 'InRent',
+    'Задерживается': 'Overdue',
+    'Закрыта': 'Closed',
+    '[N] Принят, ожидается оплата': 'OkWait',
+    '[N] Принят, оплачен': 'OkPayment',
+    'Сдано': 'Backed',
+    'Продано': 'Sold',
+    'Сохранение брони': 'KeepBooking'
+}
+
+
 MY_STORAGE_TOKEN = 'fe41eff96185254e5fb3c54d18b183127c594243'
 
 BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
@@ -9,7 +23,7 @@ BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
 HEADERS = {"Authorization": f"Bearer {MY_STORAGE_TOKEN}","Content-Type": "application/json", 'encoding': 'utf-8'}
 
 def _get_metastate(url: str) -> dict:
-    return get(url,headers=HEADERS).json()['name']
+    return STATES[get(url,headers=HEADERS).json()['name']]
 
 def _get_metaphone(attributes) -> str:
     for item in attributes:

@@ -16,15 +16,15 @@ def check_order(data):
     start = data[4]
     end = data[5]
     if start != '' and end !='':
-        new_status = "Сдано"
-        if check_status(order_id)[0][4] == "Забронирована":
-            new_status = "В аренде"
+        new_status = "Backed"
+        if check_status(order_id)[0][4] == "Booked":
+            new_status = "InRent"
 
         update_status_order(order_id, new_status) 
         update_status(order_id, new_status)
     else:
-        update_status_order(order_id, 'Продано') #установить нужный статус
-        update_status(order_id, 'Продано') #установить нужный статус
+        update_status_order(order_id, 'Sold') #установить нужный статус
+        update_status(order_id, 'Sold') #установить нужный статус
 
 
 def save_all_rents(list_rents): 
@@ -63,17 +63,17 @@ def save_all_rents(list_rents):
                 changed_fields[changed_field_db[0][1]] = this_rent
     
     for changed_field in changed_fields.items():
-        if changed_field[1][4] == "Забронирована" and changed_field[0] == "В аренде":
+        if changed_field[1][4] == "Booked" and changed_field[0] == "InRent":
             for product in changed_field[1][-1]:
                 change_amount_product(product)
                 
-        elif changed_field[1][4] == "В аренде" and changed_field[0] == "Задерживается":
+        elif changed_field[1][4] == "InRent" and changed_field[0] == "Overdue":
             ...
 
-        elif changed_field[1][4] == "В аренде" and changed_field[0] == "Сдано":
+        elif changed_field[1][4] == "InRent" and changed_field[0] == "Backed":
             ...
 
-        elif changed_field[1][4] == "Задерживается" and changed_field[0] == "Сдано":
+        elif changed_field[1][4] == "Overdue" and changed_field[0] == "Backed":
             ...
 
         else:
@@ -83,7 +83,7 @@ def save_all_rents(list_rents):
 def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = "UPDATE my_stock SET status_rent = 'Задерживается' WHERE second_datetime_rent < %s AND status_rent <> 'Сдано' RETURNING *"
+    sql = "UPDATE my_stock SET status_rent = 'Overdue' WHERE second_datetime_rent < %s AND status_rent <> 'Backed' RETURNING *"
     cursor.execute(sql, (current_datetime,))
 
     updated_rows = cursor.fetchall()
@@ -125,7 +125,7 @@ def update_status(id_order, new_status):
 def activ_rents(): # TODO Запуск каждые 5 минут
     current_datetime = datetime.now()
 
-    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Сдано'"
+    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Backed'"
     cursor.execute(sql, (current_datetime, current_datetime))
     result = cursor.fetchall()
     dict_products = {}
