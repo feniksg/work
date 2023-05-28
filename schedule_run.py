@@ -46,6 +46,6 @@ if __name__ == "__main__":
     check_timeout_thread = threading.Thread(target=check_timeout_schedule, args=(500,))
     check_timeout_thread.start()
 
-    check_payments_thread = threading.Thread(target=check_check_payments, args=(20,))
-    check_payments_thread.start()
+    # check_payments_thread = threading.Thread(target=check_check_payments, args=(20,))
+    # check_payments_thread.start()
  

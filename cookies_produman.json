@@ -11,13 +11,13 @@
             "name": "PHPSESSID",
             "path": "/",
             "sameSite": "unspecified",
-            "value": "9dok0lfk61aab7v2rs1up97ldk"
+            "value": "jo164fpk02olmfjfqnas71n13s"
         },
         {
             "domain": "kassa.produman.org",
             "name": "REMEMBERME",
             "path": "/",
-            "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1685208807%3AF6H8EbN67A7ZPnDJy0dNLfCPEA3p0EnAz_cEAepJ9Jk~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~"
+            "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1685904388%3AZjr7Iqom-dUmI2Za0LRoU4evMbBdxnjs9sCRMFD-98M~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~"
         }
     ]
     }
