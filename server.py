@@ -1,9 +1,17 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from request_get_my_stock import check_info_request, check_payment_request, get_articles
 import uvicorn
 
 app = FastAPI(debug=True)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/create/")
 async def root(request: Request):
@@ -25,10 +33,9 @@ async def root(request: Request):
 async def root(request: Request):
     return 'OK'
 
-@app.post('/article/')
-async def root(request: Request):
-    order_id = await request.json()['order_id']
-    return get_articles(order_id)
+@app.get('/article/')
+async def root(ordnum):
+    return get_articles(ordnum)
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)

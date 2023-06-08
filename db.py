@@ -1,8 +1,8 @@
 import psycopg2
 
 conn = psycopg2.connect(host="localhost",
-                        user="y02",
-                        password="adminADMIN",
+                        user="admin",
+                        password="qwertymama",
                         port="5432",
                         database="my_stock"
                         )
