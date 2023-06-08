@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from request_get_my_stock import check_info_request, check_payment_request
+from request_get_my_stock import check_info_request, check_payment_request, get_articles
 import uvicorn
 
 app = FastAPI(debug=True)
@@ -25,5 +25,10 @@ async def root(request: Request):
 async def root(request: Request):
     return 'OK'
 
+@app.post('/article/')
+async def root(request: Request):
+    order_id = await request.json()['order_id']
+    return get_articles(order_id)
+
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)

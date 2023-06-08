@@ -345,5 +345,19 @@ def leftovers_plus(id_product):
     else:
         return 'ERROR'
 
+def _get_article(product_id):
+    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={product_id}'
+    article = get(url, headers=HEADERS).json()['rows'][0]['article']
+    return article
+
+def get_articles_from_order(order_id):
+    result = []
+    url = f'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/?filter=name={order_id}'
+    r = get(url, headers=HEADERS).json()['rows'][0]['meta']['href']
+    positions = put_main_data(r)[0][-1]
+    for pos in positions:
+        result.append(_get_article(pos))
+    return result
+
 if __name__ == '__main__':
     ...
