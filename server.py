@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from request_get_my_stock import check_info_request, check_payment_request, get_articles
+from request_get_my_stock import check_info_request, check_payment_request, get_articles, calc_additional_data_product
 import uvicorn
 
 app = FastAPI(debug=True)
@@ -18,7 +18,6 @@ async def root(request: Request):
     data = await request.json()
     return check_info_request(data["events"][0]["meta"]["href"])
 
-
 @app.post("/update/")
 async def root(request: Request):
     data = await request.json()
@@ -29,7 +28,17 @@ async def root(request: Request):
     data = await request.json()
     return check_payment_request(data["events"][0]["meta"]["href"])
 
-@app.post('/check/')
+@app.post('/itemcreate/')
+async def root(request: Request):
+    data = await request.json()
+    return calc_additional_data_product(data["events"][0]["meta"]["href"])
+
+@app.post('/itemupdate/')
+async def root(request: Request):
+    data = await request.json()
+    return calc_additional_data_product(data["events"][0]["meta"]["href"])
+
+@app.get('/check/')
 async def root(request: Request):
     return 'OK'
 

@@ -6,6 +6,7 @@ def link_webhook(target, type = 'customerorder'):
         "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
         "Content-Type": "application/json"
     }
+    #Order create
     body = {
         "url": f'{target}/create/',
         "action": "CREATE",
@@ -14,9 +15,10 @@ def link_webhook(target, type = 'customerorder'):
     url = "https://online.moysklad.ru/api/remap/1.2/entity/webhook"
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
-        print("[Create] Webhook created")
+        print("[Create order] Webhook created")
     else:
-        print("[Create] Webhook creation failed", r.status_code)
+        print("[Create order] Webhook creation failed", r.status_code)
+    #Order update
     body = {
         "url": f'{target}/update/',
         "action": "UPDATE",
@@ -24,21 +26,39 @@ def link_webhook(target, type = 'customerorder'):
     }
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
-        print("[Update] Webhook created")
+        print("[Update order] Webhook created")
     else:
-        print("[Update] Webhook creation failed", r.status_code)
-    
-    type = 'paymentin'
-    headers = {
-        "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
-        "Content-Type": "application/json"
+        print("[Update order] Webhook creation failed", r.status_code)
+    #Product create
+    type = 'product'
+    body = {
+        "url": f'{target}/itemcreate/',
+        "action": "CREATE",
+        "entityType": type
     }
+    r = post(url = url, headers=headers, json = body)
+    if r.status_code == 200:
+        print("[Create product] Webhook created")
+    else:
+        print("[Create product] Webhook creation failed", r.status_code)
+    #Product update
+    body = {
+        "url": f'{target}/itemupdate/',
+        "action": "UPDATE",
+        "entityType": type
+    }
+    r = post(url = url, headers=headers, json = body)
+    if r.status_code == 200:
+        print("[Update product] Webhook created")
+    else:
+        print("[Update product] Webhook creation failed", r.status_code)
+    #Payment create
+    type = 'paymentin'
     body = {
         "url": f'{target}/payment/',
         "action": "CREATE",
         "entityType": type
     }
-    url = "https://online.moysklad.ru/api/remap/1.2/entity/webhook"
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
         print("[Payment] Webhook created")

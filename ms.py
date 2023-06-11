@@ -15,37 +15,42 @@ STATES = {
     'Сохранение брони': 'KeepBooking'
 }
 
-
 MY_STORAGE_TOKEN = 'fe41eff96185254e5fb3c54d18b183127c594243'
 
 BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
 
 HEADERS = {"Authorization": f"Bearer {MY_STORAGE_TOKEN}","Content-Type": "application/json", 'encoding': 'utf-8'}
 
+#Получение метаданных статуса заказ
 def _get_metastate(url: str) -> dict:
     return STATES[get(url,headers=HEADERS).json()['name']]
 
+#Получение номера телефона клиента
 def _get_metaphone(attributes) -> str:
     for item in attributes:
         if item['id'] == '327fa9ce-d787-11ed-0a80-01390030e9ad':
             return item['value']
     return '' 
 
+#Получение даты начала аренды
 def _get_rent_start(attributes):
     for item in attributes:
         if item['id'] == '66193f95-d788-11ed-0a80-05b500303bff':
             return item['value']
     return ''
 
+#Получение даты конца аренды
 def _get_rent_end(attributes):
     for item in attributes:
         if item['id'] == '6619417b-d788-11ed-0a80-05b500303c00':
             return item['value']
     return ''
 
+#Получение ФИО
 def _get_metafio(url):
     return get(url,headers=HEADERS).json()['name']
 
+#Получение Товаров в аренде
 def _get_positions(url):
     res = []
     r = get(url,headers=HEADERS).json()['rows']
@@ -54,9 +59,11 @@ def _get_positions(url):
         res.append(int(get(new_url,headers=HEADERS).json()['code']))
     return res
 
+#Получение метаданных контрагента
 def _get_agent_meta(url):
     return get(url,headers=HEADERS).json()['agent']['meta']['href']
 
+#Создание входящего платежа
 def create_inpayment(id_order: int, amount: int):
     url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'
     response = get(url=url, headers=HEADERS)
@@ -85,6 +92,7 @@ def create_inpayment(id_order: int, amount: int):
     response = post(url=url, headers=HEADERS, json=data)
     return response.status_code == 200
 
+#Получение всех аренд и продаж
 def get_orders():
     
     limit = 1000
@@ -127,6 +135,7 @@ def get_orders():
         res.append([id,fio,phone,state,rent_start,rent_end, sum, positions])
     return res
 
+#Получение ссылки для платежа
 def get_link_from_payment(link: str) -> str: 
     responce = get(url=link, headers=HEADERS)
     if responce.status_code == 200:
@@ -134,6 +143,7 @@ def get_link_from_payment(link: str) -> str:
     else:
         return None
 
+#Установить статус заказа
 def set_state(id_order, new_state):
     url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'
     response = get(url=url, headers=HEADERS)
@@ -150,6 +160,7 @@ def set_state(id_order, new_state):
     else:
         return 'ERROR'
 
+#Установить свободен ли товар
 def set_free(id_product, free: bool):
     url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
@@ -178,6 +189,7 @@ def set_free(id_product, free: bool):
     else:
         return 'ERROR'
 
+#Вписать активные аренды поле товара
 def set_product_comment(id_product, comment):
     url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
@@ -204,6 +216,34 @@ def set_product_comment(id_product, comment):
     else:
         return 'ERROR'
 
+#Установить себестоимость для товара
+def set_selfprice(link):
+    try:
+        value = get(url=link, headers=HEADERS).json()['buyPrice']['value']
+    except:
+        value = 0
+    body = {
+        "attributes": [
+            {
+                "meta": {
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/3edab5e5-06cc-11ee-0a80-08d500177993",
+                    "type": "attributemetadata",
+                    "mediaType": "application/json"
+                    },
+                "id": "3edab5e5-06cc-11ee-0a80-08d500177993",
+                "name": "Себестоимость",
+                "type": "double",
+                "value": value / 100
+            }
+        ]
+    }
+    r = put(url=link, headers=HEADERS,json=body)
+    if r.status_code == 200:
+        return "OK"
+    else:
+        return "Something wrong"
+
+#Установить всем товарам статус свободедн
 def set_all_free():
     url = f'{BASE_URL}entity/product'
     body = {
@@ -263,6 +303,7 @@ def set_all_free():
     else:
         return 'ERROR'
 
+#Получить по ссылке основные данные заказа
 def put_main_data(link):
     r = get(url=link, headers=HEADERS).json()
     id = r['name']
@@ -284,6 +325,7 @@ def put_main_data(link):
     positions = _get_positions(r['positions']['meta']['href'])
     return [[id,fio,phone,state,rent_start,rent_end, sum, positions]]
 
+#Установить активные аренды для всех товаров
 def write_active_rents(data: dict):
     set_all_free()
     for product in data.keys():
@@ -297,7 +339,8 @@ def write_active_rents(data: dict):
             text+=f'{start} - {end} | {fio} | {phone}\n'
         set_product_comment(product, text)
         set_free(product, False)
-        
+
+#Увеличить количество товара в остатках        
 def leftovers_plus(id_product):
     url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
@@ -345,11 +388,13 @@ def leftovers_plus(id_product):
     else:
         return 'ERROR'
 
+#Получить артикул товара
 def _get_article(product_id):
     url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={product_id}'
     article = get(url, headers=HEADERS).json()['rows'][0]['article']
     return article
 
+#Получить список артикулов в заказе
 def get_articles_from_order(order_id):
     result = []
     url = f'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/?filter=name={order_id}'
@@ -359,5 +404,108 @@ def get_articles_from_order(order_id):
         result.append(_get_article(pos))
     return result
 
-if __name__ == '__main__':
+#Установить себестоимость для всего заказа
+def set_selfprice_order(link):
+    positions_url = get(url=link, headers=HEADERS).json()['positions']['meta']['href']
+    rows = get(url=positions_url, headers=HEADERS).json()['rows']
+    selfprice = 0
+    for row in rows:
+        product_url = row['assortment']['meta']['href']
+        try:
+            buyprice = get(url=product_url, headers=HEADERS).json()['buyPrice']['value']
+        except:
+            buyprice = 0
+        selfprice+=buyprice
+    data = {
+        "attributes":[
+            {"meta": {
+                "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/9aa0e4d5-06dc-11ee-0a80-04860027416b",
+                "type": "attributemetadata",
+                "mediaType": "application/json"
+            },
+            "value": float(selfprice / 100)
+            }
+        ]
+    }
+    r = put(url = link, headers=HEADERS, json=data)
+    if r.status_code == 200:
+        return "OK", r.status_code
+    else:
+        return "Something wrong", r.status_code
+
+#Получение поля доп. расходы для товара по ссылке
+def get_additional_expenses(link):
+    response = get(link, headers=HEADERS).json()
+    attrs = response['attributes']
+    expenses = 0
+    for attribute in attrs:
+        if attribute['id'] == '95621bc6-085a-11ee-0a80-0c7300357cc4':
+            expenses = attribute['value']
+    return expenses
+
+#Получение суммы доп. расходов для заказа
+def get_sum_additional_expenses(link):
+    expenses_sum = 0
+    positions_url = get(link, headers=HEADERS).json()['positions']['meta']['href']
+    products = get(positions_url, headers=HEADERS).json()['rows']
+    for product in products:
+        expenses_sum+=get_additional_expenses(product['assortment']['meta']['href'])
+    return expenses_sum
+
+#Установить рентабельность для заказа
+def set_rentable(link):
+    order = get(url=link, headers=HEADERS).json()
+    state = _get_metastate(order['state']['meta']['href'])
+    suma = order['sum'] / 100
+    attributes = order['attributes']
+    self_price = 0
+    for attr in attributes:
+        if attr['id'] == '9aa0e4d5-06dc-11ee-0a80-04860027416b':
+            self_price = attr['value']
+    if state == 'Sold':
+        prib = suma - self_price
+        rent = prib * 100 / prib
+    else:
+        expenses_sum = get_sum_additional_expenses(link)
+        clear_sum = suma - expenses_sum
+        rent = clear_sum / suma * 100
+        prib = clear_sum
+    data = {
+            "attributes" : [
+                {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/cab054bc-085a-11ee-0a80-10980036abdd",
+                        "type": "attributemetadata",
+                        "mediaType": "application/json"
+                    },
+                    "value": prib
+                },
+                {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/cab05654-085a-11ee-0a80-10980036abde",
+                        "type": "attributemetadata",
+                        "mediaType": "application/json"
+                    },
+                    'value': f'{rent}%'
+                }
+            ]
+        }
+    response = put(url=link, headers=HEADERS, json=data)
+    if response.status_code == 200:
+        return "OK"
+    else:
+        return "Something wrong"
+
+#Получить метаданные администратора
+def _get_personal_meta(name):
+    url = f'https://online.moysklad.ru/api/remap/1.2/entity/customentity/c62355f1-006a-11ee-0a80-06df000b2730/?filter=name={name}'
+    responce = get(url, headers=HEADERS).json()['rows'][0]['meta']
+    name = get(responce['href'], headers=HEADERS).json()['name']
+    data = {'meta':responce, 'name': name}
+    print(data)
+    return data
+if __name__ == '__main__': 
     ...
+    # link = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
+    # set_selfprice_order(link)
+    # print(set_rentable(link))
