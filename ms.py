@@ -496,6 +496,85 @@ def set_rentable(link):
     else:
         return "Something wrong"
 
+#Инициировать обновление всех товаров (Работает около 10-15 минут на 2,5к товаров)
+def init_all_product_update():
+    tojson = {
+        'attributes':[
+            {
+                "meta": {
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/5488026b-0861-11ee-0a80-0486003855c5",
+                    "type": "attributemetadata",
+                    "mediaType": "application/json"
+                },
+                'value': int(round(time.time()))
+            }
+        ]
+    }
+    limit = 500
+    offset = 0
+    url_api = 'entity/product' 
+    body = {
+        'limit': limit,
+        'offset': offset
+    }
+    response = get(url=f'{BASE_URL}{url_api}/?limit={limit}&offset={offset}',headers=HEADERS, json= body,)
+    if response.status_code == 200:
+        data = response.json()['rows']
+    else:
+        return "ERROR: Couldn't get product list"
+    r = data
+    while len(r) == limit:
+        offset+=500
+        r = get(url=f'{BASE_URL}{url_api}/?limit={limit}&offset={offset}',headers=HEADERS, json= body).json()['rows']
+        data+=r
+    links = []
+    for item in data:
+        links.append(item['meta']['href'])
+    with open('productslinks.json', 'w+') as f:
+        json.dump(links, f, indent=2)
+    for link in links:
+        put(link, headers=HEADERS, json= tojson)
+        time.sleep(0.2)
+
+def init_all_order_update():
+    tojson = {
+        'attributes':[
+            {
+                "meta": {
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/78e3d009-0868-11ee-0a80-07c2003659a8",
+                    "type": "attributemetadata",
+                    "mediaType": "application/json"
+                },
+                'value': int(round(time.time()))
+            }
+        ]
+    }
+    limit = 500
+    offset = 0
+    url_api = 'entity/customerorder' 
+    body = {
+        'limit': limit,
+        'offset': offset
+    }
+    response = get(url=f'{BASE_URL}{url_api}/?limit={limit}&offset={offset}',headers=HEADERS, json= body,)
+    if response.status_code == 200:
+        data = response.json()['rows']
+    else:
+        return "ERROR: Couldn't get order list"
+    r = data
+    while len(r) == limit:
+        offset+=500
+        r = get(url=f'{BASE_URL}{url_api}/?limit={limit}&offset={offset}',headers=HEADERS, json= body).json()['rows']
+        data+=r
+    links = []
+    for item in data:
+        links.append(item['meta']['href'])
+    with open('orderlinks.json', 'w+') as f:
+        json.dump(links, f, indent=2)
+    for link in links:
+        put(link, headers=HEADERS, json= tojson)
+        time.sleep(0.2)
+
 #Получить метаданные администратора
 def _get_personal_meta(name):
     url = f'https://online.moysklad.ru/api/remap/1.2/entity/customentity/c62355f1-006a-11ee-0a80-06df000b2730/?filter=name={name}'
@@ -504,8 +583,10 @@ def _get_personal_meta(name):
     data = {'meta':responce, 'name': name}
     print(data)
     return data
+
 if __name__ == '__main__': 
-    ...
+    # init_all_product_update()
+    init_all_order_update()
     # link = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
     # set_selfprice_order(link)
     # print(set_rentable(link))
