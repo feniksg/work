@@ -1,23 +1,22 @@
 {
-    "cookie_list": [
-        {
-            "domain": ".produman.org",
-            "name": "__ddg1_",
-            "path": "/",
-            "value": "o3gceCDPLBphaLMoXLIB"
-        },
-        {
-            "domain": "kassa.produman.org",
-            "name": "PHPSESSID",
-            "path": "/",
-            "sameSite": "unspecified",
-            "value": "jo164fpk02olmfjfqnas71n13s"
-        },
-        {
-            "domain": "kassa.produman.org",
-            "name": "REMEMBERME",
-            "path": "/",
-            "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1685904388%3AZjr7Iqom-dUmI2Za0LRoU4evMbBdxnjs9sCRMFD-98M~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~"
-        }
-    ]
+  "cookie_list": [
+    {
+      "domain": "kassa.produman.org",
+      "name": "PHPSESSID",
+      "path": "/",
+      "value": "c6t178mosrs10ttotgmidkh6fc"
+    },
+    {
+      "domain": "kassa.produman.org",
+      "name": "REMEMBERME",
+      "path": "/",
+      "value": "App.Entity.Owner%3AdmxhZGFrdWxpa292YUBnbWFpbC5jb20~%3A1687525837%3AUcFfTzekAMbD_A1P3P0PEFfgMb1MTO-oEIt9cngi-_M~pIqv3rgY76cEwAsp8cWhPVloMtP3r7lSwkDzwCRvG8Q~"
+    },
+    {
+      "domain": ".produman.org",
+      "name": "__ddg1_",
+      "path": "/",
+      "value": "o3gceCDPLBphaLMoXLIB"
     }
+  ]
+}
