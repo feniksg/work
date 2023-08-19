@@ -103,7 +103,7 @@ def get_orders():
         'offset': offset
     }
 
-    response = get(url=f'{BASE_URL}{url_api}',headers=HEADERS, json= body,)
+    response = get(url=f'{BASE_URL}{url_api}?limit={limit}&offset={offset}',headers=HEADERS)
     if response.status_code == 200:
         data = response.json()['rows']
     else:
@@ -111,26 +111,27 @@ def get_orders():
     r = data
     while len(r) == limit:
         offset+=1000
-        r = get(url=f'{BASE_URL}{url_api}',headers=HEADERS, json= body).json()['rows']
+        r = get(url=f'{BASE_URL}{url_api}?limit={limit}&offset={offset}',headers=HEADERS).json()['rows']
         data+=r
     res = []
     for order in data:
         id = order['name']
         sum = order['sum']
         state = _get_metastate(order['state']['meta']['href'])
+        
         try:
             phone = _get_metaphone(order['attributes'])
         except:
             phone = ''
+
         fio = str(_get_metafio(order['agent']['meta']['href'])).encode().decode('utf-8')
-        try:
-            rent_start = _get_rent_start(order['attributes'])
-        except:
+
+        rent_start = _get_rent_start(order['attributes'])
+        rent_end = _get_rent_end(order['attributes'])
+
+        if not rent_start and not rent_end:
             continue
-        try:
-            rent_end = _get_rent_end(order['attributes'])
-        except:
-            continue
+
         positions = _get_positions(order['positions']['meta']['href'])
         res.append([id,fio,phone,state,rent_start,rent_end, sum, positions])
     return res

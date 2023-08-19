@@ -5,7 +5,6 @@ def upload_all_orders():
     list_rents = get_orders()
     return save_all_rents(list_rents)
 
-
 def check_info_request(link):
     set_selfprice_order(link)
     set_rentable(link)
