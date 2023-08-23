@@ -1,6 +1,8 @@
 ﻿from requests import put,get,post
 from states import states_order
-import json, time
+import json, time, logging
+
+logging.basicConfig(level=logging.INFO, filename="ms_log.log",filemode="w")
 
 STATES = {
     'Забронирована': 'Booked',
@@ -90,7 +92,7 @@ def create_inpayment(id_order: int, amount: int):
     data['sum'] = amount
     url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin'
     response = post(url=url, headers=HEADERS, json=data)
-    return response.status_code == 200
+    return 'ok'
 
 #Получение всех аренд и продаж
 def get_orders():
@@ -98,11 +100,7 @@ def get_orders():
     limit = 1000
     offset = 0
     url_api = 'entity/customerorder' 
-    body = {
-        'limit': limit,
-        'offset': offset
-    }
-
+    
     response = get(url=f'{BASE_URL}{url_api}?limit={limit}&offset={offset}',headers=HEADERS)
     if response.status_code == 200:
         data = response.json()['rows']
@@ -149,7 +147,14 @@ def set_state(id_order, new_state):
     url = f'{BASE_URL}entity/customerorder/?filter=name={id_order}'
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200:
-        order = response.json()['rows'][0]['meta']['href']
+        if response.json()['rows'] != []:
+            order = response.json()['rows'][0]['meta']['href']
+        else:
+            logging.error(f'set_state: Order not found. Order id - [{id_order}]')
+            return 'ERROR'
+    else:
+        logging.error(f'set_state: Responce (get order) status code - [{response.status_code}].')
+        return 'ERROR'
     body ={
         'state': {
             'meta': states_order[new_state]['meta']
@@ -159,6 +164,7 @@ def set_state(id_order, new_state):
     if r.status_code==200:
         return 'OK'
     else:
+        logging.error(f'set_state: Responce (change state) status code - [{response.status_code}].')
         return 'ERROR'
 
 #Установить свободен ли товар
