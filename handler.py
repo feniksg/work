@@ -2,7 +2,7 @@ from request_post_my_stock import update_status_order, change_active_rents, chan
 from db import conn, cursor
 from datetime import datetime
 
-import time
+import time, json
 
 
 def get_all_rents():
@@ -139,10 +139,31 @@ def activ_rents(): # TODO Запуск каждые 5 минут
     dict_products = dict(sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime']))
     return change_active_rents(dict_products)
 
-        
+def activ_rents_to_json(): 
+    current_datetime = datetime.now()
+
+    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Backed'"
+    cursor.execute(sql, (current_datetime, current_datetime))
+    result = cursor.fetchall()
+    dict_products = {}
+    for order in result:
+        for product_id in order[-1]:
+            if product_id in dict_products:
+                dict_products[product_id] += [{"start_datetime": order[5], "end_datetime": order[6], "fio_rent": order[2], "phone_rent": order[3]}]
+            else:
+                dict_products[product_id] = [{"start_datetime": order[5], "end_datetime": order[6], "fio_rent": order[2], "phone_rent": order[3]}]
+    
+    dict_products = dict(sorted(dict_products.items(), key=lambda x: x[1][0]['end_datetime']))
+
+    with open('activ_rents.json', 'w+', encoding="utf-8") as file:
+        json.dump(dict_products,file, indent=2, ensure_ascii=False)
+    
+
+
  
 if __name__ == "__main__":
-    activ_rents()
+    activ_rents_to_json()
+    #activ_rents()
     # start = time.time()
     # print(check_timeout())
     # print(time.time()-start)
