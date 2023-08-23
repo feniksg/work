@@ -65,7 +65,7 @@ def _get_agent_meta(url):
 
 #Создание входящего платежа
 def create_inpayment(id_order: int, amount: int):
-    url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'
+    url = f'{BASE_URL}entity/customerorder/?filter=name={id_order}'
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200 and response.json()['rows'] != []:
         order = response.json()['rows'][0]['meta']['href']
@@ -146,7 +146,7 @@ def get_link_from_payment(link: str) -> str:
 
 #Установить статус заказа
 def set_state(id_order, new_state):
-    url = f'{BASE_URL}/entity/customerorder/?filter=name={id_order}'
+    url = f'{BASE_URL}entity/customerorder/?filter=name={id_order}'
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200:
         order = response.json()['rows'][0]['meta']['href']
@@ -163,7 +163,7 @@ def set_state(id_order, new_state):
 
 #Установить свободен ли товар
 def set_free(id_product, free: bool):
-    url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
+    url = f'{BASE_URL}entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
     if free:
         value = 'Да'
@@ -192,7 +192,7 @@ def set_free(id_product, free: bool):
 
 #Вписать активные аренды поле товара
 def set_product_comment(id_product, comment):
-    url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
+    url = f'{BASE_URL}entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200:
         product = response.json()['rows'][0]['meta']['href']
@@ -343,7 +343,7 @@ def write_active_rents(data: dict):
 
 #Увеличить количество товара в остатках        
 def leftovers_plus(id_product):
-    url = f'{BASE_URL}/entity/product/?filter=code={id_product}'
+    url = f'{BASE_URL}entity/product/?filter=code={id_product}'
     response = get(url=url, headers=HEADERS)
     if response.status_code == 200:
         product = response.json()['rows'][0]['meta']['href']

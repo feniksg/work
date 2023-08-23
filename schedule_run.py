@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # get_all_rents_thread = threading.Thread(target=get_all_rents_schedule, args=(300,))
     # get_all_rents_thread.start()
 
-    activ_rents_thread = threading.Thread(target=activ_rents_schedule, args=(500,))
+    activ_rents_thread = threading.Thread(target=activ_rents_schedule, args=(1000,))
     activ_rents_thread.start()
  
     check_timeout_thread = threading.Thread(target=check_timeout_schedule, args=(500,))
