@@ -83,14 +83,14 @@ def save_all_rents(list_rents):
 def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = "UPDATE my_stock SET status_rent = 'Overdue' WHERE second_datetime_rent < %s AND status_rent <> 'Backed' RETURNING *"
+    sql = f"UPDATE my_stock SET status_rent = 'Overdue' WHERE second_datetime_rent < %s AND status_rent <> 'Backed' AND status_rent <> 'Overdue' RETURNING *;"
     cursor.execute(sql, (current_datetime,))
-
+    
     updated_rows = cursor.fetchall()
+    print(f"check_timeout: updated order's counter = {len(updated_rows)}")
     for row in updated_rows:
-        # print(row)
         update_status_order(row[1], row[4])
-
+        time.sleep(0.1)
     conn.commit()
 
 
@@ -162,9 +162,9 @@ def activ_rents_to_json():
 
  
 if __name__ == "__main__":
-    activ_rents_to_json()
-    #activ_rents()
+    # activ_rents_to_json()
+    # activ_rents()
     # start = time.time()
     # print(check_timeout())
     # print(time.time()-start)
-
+    ...

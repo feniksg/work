@@ -411,6 +411,36 @@ def get_articles_from_order(order_id):
         result.append(_get_article(pos))
     return result
 
+#записать артикулы товаров в поле заказа
+def set_articles_order(link):
+    positions_url = get(url=link, headers=HEADERS).json()['positions']['meta']['href']
+    rows = get(url=positions_url, headers=HEADERS).json()['rows']
+    articles = []
+    for row in rows:
+        product_url = row['assortment']['meta']['href']
+        try:
+            article = get(url=product_url, headers=HEADERS).json()['article']
+            articles.append(article)
+        except:
+            ...
+    output = ', '.join(articles)
+    data = {
+        "attributes":[
+            {"meta": {
+                "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/e47e0fdf-4789-11ee-0a80-08db00172a76",
+                "type": "attributemetadata",
+                "mediaType": "application/json"
+            },
+            "value": output
+            }
+        ]
+    }
+    r = put(url = link, headers=HEADERS, json=data)
+    if r.status_code == 200:
+        return "OK", r.status_code
+    else:
+        return "Something wrong", r.status_code
+    
 #Установить себестоимость для всего заказа
 def set_selfprice_order(link):
     positions_url = get(url=link, headers=HEADERS).json()['positions']['meta']['href']
