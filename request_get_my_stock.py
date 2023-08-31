@@ -1,11 +1,12 @@
 from handler import save_all_rents, update_status, check_order
-from ms import get_orders, put_main_data, get_link_from_payment, get_articles_from_order, set_selfprice, set_selfprice_order, set_rentable, set_articles_order
+from ms import get_orders, put_main_data, get_link_from_payment, get_articles_from_order, set_selfprice, set_selfprice_order, set_rentable, set_articles_order, normalize_number
 
 def upload_all_orders():
     list_rents = get_orders()
     return save_all_rents(list_rents)
 
 def check_info_request(link):
+    normalize_number(link)
     set_selfprice_order(link)
     set_rentable(link)
     set_articles_order(link)

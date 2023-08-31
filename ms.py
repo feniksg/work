@@ -141,7 +141,17 @@ def get_link_from_payment(link: str) -> str:
         return responce.json()['operations'][0]['meta']['href']
     else:
         return None
-
+#Преобразует номер из формата 00001 в 1
+def normalize_number(link):
+    response = get(url=link, headers=HEADERS)
+    if response.status_code == 200:
+        name = response.json()['name']
+        name = int(name)
+        data = {
+            "name": name
+        }
+        response = put(url=link, headers=HEADERS, json=data)
+        
 #Установить статус заказа
 def set_state(id_order, new_state):
     url = f'{BASE_URL}entity/customerorder/?filter=name={id_order}'
