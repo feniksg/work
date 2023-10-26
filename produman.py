@@ -1,8 +1,6 @@
 ﻿from requests import get, cookies
 from ms import create_inpayment
-import json, schedule, threading, time
-PRO_LOGIN = 'vladakulikova@gmail.com'
-PRO_PASSWORD = 'r4frvzf5aw'
+import json
 
 def get_payments():
     url = 'https://kassa.produman.org/order/list/1'

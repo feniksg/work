@@ -1,23 +1,22 @@
 ﻿from requests import put,get,post
 from states import states_order
+from settings import MY_STORAGE_TOKEN
 import json, time, logging
 
 logging.basicConfig(level=logging.INFO, filename="ms_log.log",filemode="w")
 
 STATES = {
-    'Забронирована': 'Booked',
+    'Бронь': 'Booked',
     'Отмена': 'Cancel',
-    'В аренде': 'InRent',
+    'Аренда': 'InRent',
     'Задерживается': 'Overdue',
     'Закрыта': 'Closed',
     '[N] Принят, ожидается оплата': 'OkWait',
     '[N] Принят, оплачен': 'OkPayment',
-    'Сдано': 'Backed',
-    'Продано': 'Sold',
+    'Прохождение химчистки': 'Backed',
+    'Продажа': 'Sold',
     'Сохранение брони': 'KeepBooking'
 }
-
-MY_STORAGE_TOKEN = 'fe41eff96185254e5fb3c54d18b183127c594243'
 
 BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
 
@@ -340,7 +339,10 @@ def put_main_data(link):
     except:
         rent_end = ''
     positions = _get_positions(r['positions']['meta']['href'])
-    return [[id,fio,phone,state,rent_start,rent_end, sum, positions]]
+    if rent_start and rent_end:
+        return [[id,fio,phone,state,rent_start,rent_end, sum, positions]]
+    else:
+        return None
 
 #Установить активные аренды для всех товаров
 def write_active_rents(data: dict):
@@ -632,8 +634,10 @@ def _get_personal_meta(name):
     return data
 
 if __name__ == '__main__': 
+    
     # init_all_product_update()
-    init_all_order_update()
+    # init_all_order_update()
     # link = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
     # set_selfprice_order(link)
     # print(set_rentable(link))
+    ...

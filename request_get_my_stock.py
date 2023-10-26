@@ -11,7 +11,8 @@ def check_info_request(link):
     set_rentable(link)
     set_articles_order(link)
     list_rents = put_main_data(link)
-    save_all_rents(list_rents)
+    if list_rents:
+        save_all_rents(list_rents)
 
 def get_articles(order_id):
     return get_articles_from_order(order_id)

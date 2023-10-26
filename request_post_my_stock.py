@@ -1,4 +1,3 @@
-import requests
 from ms import set_state, leftovers_plus, write_active_rents
 
 def update_status_order(id_order, new_status):

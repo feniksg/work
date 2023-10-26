@@ -97,5 +97,4 @@
       "stateType": "Regular",
       "entityType": "customerorder"
     }
-
 }
