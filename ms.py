@@ -633,8 +633,285 @@ def _get_personal_meta(name):
     print(data)
     return data
 
-if __name__ == '__main__': 
+#Создание товара
+def create_item(item: dict):
+    url = f'{BASE_URL}entity/product'
+    name = item['name']
+    externalCode = item['externalCode']
+    code = item['externalCode']
+    article = item['article']
+    try:
+        salePrice = int(item['salePrice'])
+    except:
+        salePrice = item['salePrice']
+    if type(salePrice) != int or salePrice == None or salePrice == '':
+        salePrice = 0
+    try:
+        photoPrice = int(item['photoPrice'])
+    except:
+        photoPrice = item['photoPrice']
+    if type(photoPrice) != int or photoPrice == None or photoPrice == '':
+        photoPrice = 0
+    try:
+        partyPrice = int(item['partyPrice'])
+    except:
+        partyPrice = item['photoPrice']
+    if type(partyPrice) != int or partyPrice == None or partyPrice == '':
+        partyPrice = 0
+    try:
+        oldPrice = int(item['oldPrice'])
+    except:
+        oldPrice = item['oldPrice']
+    if type(oldPrice) != int or oldPrice == None or oldPrice == '':
+        oldPrice = 0
     
+    body = {
+        "name" : name,
+        "externalCode" : externalCode,
+        "code": code,
+        "article" : article,
+        "salePrices": [
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : salePrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : photoPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json"
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : partyPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : oldPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            }
+        ],
+        "productFolder": {
+                "meta":{
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
+                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/metadata",
+                    "type": "productfolder",
+                    "mediaType": "application/json"
+                }
+        }
+    }
+    
+    r = post(url=url, headers=HEADERS, json=body)
+    if r.status_code == 200:
+        print(f'[{code}] Успешно экпортирован')
+        logging.info(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+    elif r.status_code == 400:
+        print(f'[{code}] Произошла ошибка, проверьте поля ')
+        logging.error(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+    elif r.status_code == 412:
+        print(f'[{code}] Произошла ошибка, товар с таким кодом уже существует. Возможно он в архиве.')
+        logging.error(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+    else:
+        print(f'[{code}] Произошла ошибка, и я не знаю какая...')
+        logging.error(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+
+#Проверка наличия товара    
+def check_item(code):
+    url = f'{BASE_URL}entity/product/?filter=code={code}'
+    r = get(url= url, headers = HEADERS)
+    if r.json()["rows"] != []:
+        return True
+    else:
+        return False
+
+#Обновление товара
+def update_item(item: dict):
+    name = item['name']
+    externalCode = item['externalCode']
+    code = item['externalCode']
+    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={code}'
+    objectId = get(url = url, headers=HEADERS).json()['rows'][0]['id']
+    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/{objectId}'
+    article = item['article']
+    try:
+        salePrice = int(item['salePrice'])
+    except:
+        salePrice = item['salePrice']
+    if type(salePrice) != int or salePrice == None or salePrice == '':
+        salePrice = 0
+    try:
+        photoPrice = int(item['photoPrice'])
+    except:
+        photoPrice = item['photoPrice']
+    if type(photoPrice) != int or photoPrice == None or photoPrice == '':
+        photoPrice = 0
+    try:
+        partyPrice = int(item['partyPrice'])
+    except:
+        photoPrice = item['photoPrice']
+    if type(partyPrice) != int or partyPrice == None or partyPrice == '':
+        partyPrice = 0
+    try:
+        oldPrice = int(item['oldPrice'])
+    except:
+        oldPrice = item['oldPrice']
+    if type(oldPrice) != int or oldPrice == None or oldPrice == '':
+        oldPrice = 0
+    
+    body = {
+        "name" : name,
+        "externalCode" : externalCode,
+        "code": code,
+        "article" : article,
+        "salePrices": [
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : salePrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : photoPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json"
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : partyPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            },
+            {
+                "priceType": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
+                        "type": "pricetype",
+                        "mediaType": "application/json"
+                    }
+                },
+                "value" : oldPrice*100,
+                "currency": {
+                    "meta": {
+                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "type": "currency",
+                        "mediaType": "application/json",
+                    }
+                }
+            }
+        ],
+        "productFolder": {
+                "meta":{
+                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
+                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/metadata",
+                    "type": "productfolder",
+                    "mediaType": "application/json"
+                }
+        }
+    }
+    
+    r = put(url=url, headers=HEADERS, json=body)
+    if r.status_code == 200:
+        print(f'[{code}] Успешно обновлён')
+        logging.info(f'[Update Item] {body["code"]}|{body["article"]}|{body["name"]}')
+    elif r.status_code == 400:
+        print(f'[{code}] Произошла ошибка, проверьте поля ')
+        logging.error(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+    else:
+        print(f'[{code}] Произошла ошибка, и я не знаю какая...')
+        logging.error(f'[Update Item] Statuc Code: {r.status_code} {body["code"]}|{body["article"]}|{body["name"]}')
+
+if __name__ == '__main__': 
     # init_all_product_update()
     # init_all_order_update()
     # link = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
