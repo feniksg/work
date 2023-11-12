@@ -2,8 +2,9 @@ from request_post_my_stock import update_status_order, change_active_rents, chan
 from db import conn, cursor
 from datetime import datetime
 
-import time, json
+import time, json, logging
 
+logging.basicConfig(level=logging.INFO, filename="ms_log.log",filemode="wa")
 
 def get_all_rents():
     sql = "SELECT * FROM my_stock"
@@ -16,7 +17,7 @@ def check_order(data):
     start = data[4]
     end = data[5]
     if start != '' and end !='':
-        new_status = "Backed"
+        new_status = "Closed"
         if check_status(order_id)[0][4] == "Booked":
             new_status = "InRent"
 
@@ -70,10 +71,10 @@ def save_all_rents(list_rents):
         elif changed_field[1][4] == "InRent" and changed_field[0] == "Overdue":
             ...
 
-        elif changed_field[1][4] == "InRent" and changed_field[0] == "Backed":
+        elif changed_field[1][4] == "InRent" and changed_field[0] == "Closed":
             ...
 
-        elif changed_field[1][4] == "Overdue" and changed_field[0] == "Backed":
+        elif changed_field[1][4] == "Overdue" and changed_field[0] == "Closed":
             ...
 
         else:
@@ -83,11 +84,12 @@ def save_all_rents(list_rents):
 def check_timeout(): # TODO Запуск каждую минуту
     current_datetime = datetime.now()
 
-    sql = f"UPDATE my_stock SET status_rent = 'Overdue' WHERE second_datetime_rent < %s AND status_rent <> 'Backed' AND status_rent <> 'Overdue' RETURNING *;"
+    sql = f"UPDATE my_stock SET status_rent = 'Overdue' WHERE second_datetime_rent < %s AND status_rent <> 'Closed' AND status_rent <> 'Overdue' RETURNING *;"
+    
     cursor.execute(sql, (current_datetime,))
     
     updated_rows = cursor.fetchall()
-    print(f"check_timeout: updated order's counter = {len(updated_rows)}")
+    logging.debug(f"check_timeout: updated order's counter = {len(updated_rows)}")
     for row in updated_rows:
         update_status_order(row[1], row[4])
         time.sleep(0.1)
@@ -125,7 +127,7 @@ def update_status(id_order, new_status):
 def activ_rents(): # TODO Запуск каждые 5 минут
     current_datetime = datetime.now()
 
-    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Backed'"
+    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Closed'"
     cursor.execute(sql, (current_datetime, current_datetime))
     result = cursor.fetchall()
     dict_products = {}
@@ -142,7 +144,7 @@ def activ_rents(): # TODO Запуск каждые 5 минут
 def activ_rents_to_json(): 
     current_datetime = datetime.now()
 
-    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Backed'"
+    sql = "SELECT * FROM my_stock WHERE first_datetime_rent < %s AND second_datetime_rent > %s AND status_rent <> 'Closed'"
     cursor.execute(sql, (current_datetime, current_datetime))
     result = cursor.fetchall()
     dict_products = {}

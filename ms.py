@@ -3,7 +3,7 @@ from states import states_order
 from settings import MY_STORAGE_TOKEN
 import json, time, logging
 
-logging.basicConfig(level=logging.INFO, filename="ms_log.log",filemode="w")
+logging.basicConfig(level=logging.INFO, filename="ms_log.log",filemode="a")
 
 STATES = {
     'Бронь': 'Booked',
@@ -13,7 +13,7 @@ STATES = {
     'Закрыта': 'Closed',
     '[N] Принят, ожидается оплата': 'OkWait',
     '[N] Принят, оплачен': 'OkPayment',
-    'Прохождение химчистки': 'Backed',
+    'Прохождение химчистки': 'Closed',
     'Продажа': 'Sold',
     'Сохранение брони': 'KeepBooking'
 }

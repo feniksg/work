@@ -1,6 +1,9 @@
 ﻿from ms import MY_STORAGE_TOKEN
 from requests import post, get
 
+# http://c64d65bf721c.vps.myjino.ru/ - server url
+
+
 def link_webhook(target, type = 'customerorder'):
     headers = {
         "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
