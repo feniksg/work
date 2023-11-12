@@ -2,7 +2,7 @@
 from bitrix_updater import scan
 
 def bitrix_up(time_seconds):
-    schedule.every(time_seconds).second.do(scan)
+    schedule.every(time_seconds).seconds.do(scan)
 
     while True:
         schedule.run_pending()
