@@ -1,8 +1,9 @@
 ﻿import schedule, time, threading
-from bitrix_updater import scan
+from testbt import BtUpdater
 
 def bitrix_up(time_seconds):
-    schedule.every(time_seconds).seconds.do(scan)
+    updater = BtUpdater
+    schedule.every(time_seconds).seconds.do(updater.mainloop)
 
     while True:
         schedule.run_pending()
@@ -10,5 +11,5 @@ def bitrix_up(time_seconds):
 
 
 if __name__ == '__main__':
-    bitrix = threading.Thread(target=bitrix_up, args=(300,))
+    bitrix = threading.Thread(target=bitrix_up, args=(900,))
     bitrix.start()

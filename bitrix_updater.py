@@ -1,18 +1,18 @@
 ﻿from csv import reader
-from requests import post
-from ms import create_item,update_item
+from requests import post, exceptions
+from ms import create_item,update_item, check_item
 from os.path import exists
-import logging, json
+import logging, json, time
 
-import logging
 
-# Создаем логгер
+
+
 logger = logging.getLogger('btlogger')
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 file_handler = logging.FileHandler('bitrix/bt.log')
-file_handler.setLevel(logging.DEBUG)  # Устанавливаем уровень записи для обработчика
+file_handler.setLevel(logging.DEBUG)  
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
@@ -77,30 +77,12 @@ def parse(data):
 
 def to_sklad(item, mode):
     if mode == 'update':
-                update_item(
-                        {                
-                "name" : item.name,
-                "externalCode": item.id,
-                "article" : item.article,
-                "salePrice": item.sell_price,
-                "photoPrice": item.photo_price,
-                "partyPrice": item.party_price,
-                "oldPrice": item.old_price,
-                }
-                )
+                if check_item(item.id):
+                    update_item({"name" : item.name,"externalCode": item.id,"article" : item.article,"salePrice": item.sell_price,"photoPrice": item.photo_price,"partyPrice": item.party_price,"oldPrice": item.old_price,})
     elif mode == 'create':
-        create_item({
-                "name" : item.name,
-                "externalCode": item.id,
-                "article" : item.article,
-                "salePrice": item.sell_price,
-                "photoPrice": item.photo_price,
-                "partyPrice": item.party_price,
-                "oldPrice": item.old_price,
-                })
+        create_item({"name" : item.name,"externalCode": item.id,"article" : item.article,"salePrice": item.sell_price,"photoPrice": item.photo_price,"partyPrice": item.party_price,"oldPrice": item.old_price,})
 
 def scan():
-    
     if exists('bitrix/temp2.csv'):
         with open('bitrix/temp2.csv', 'r', encoding='utf-8') as f:
             data = f.read()
@@ -137,17 +119,31 @@ def scan():
                 oldddict = json.load(file)
             keys = oldddict.keys()
             for item in items:
-                key = str(item.id)
-                if key in keys:
-                    if oldddict[key] != str(item):
-                        to_sklad(item, 'update')
-                        logger.info(f"Item {key}, updated.")
-                    else:
-                        logger.info(f"Item {key}, don't need update.")
-                else:
-                    to_sklad(item, 'create')
-                    logger.info(f"Item {key}, created.")
-            
+                    if int(item.id) < 12355:
+                        continue
+                    try:
+                        key = str(item.id)
+                        if key in keys:
+                            if oldddict[key] != str(item):
+                                to_sklad(item, 'update')
+                                logger.info(f"Item {key}, updated.")
+                            else:
+                                logger.info(f"Item {key}, don't need update.")
+                        else:
+                            to_sklad(item, 'create')
+                            logger.info(f"Item {key}, created.")
+                    except exceptions.ConnectionError:
+                        time.sleep(5)
+                        key = str(item.id)
+                        if key in keys:
+                            if oldddict[key] != str(item):
+                                to_sklad(item, 'update')
+                                logger.info(f"Item {key}, updated.")
+                            else:
+                                logger.info(f"Item {key}, don't need update.")
+                        else:
+                            to_sklad(item, 'create')
+                            logger.info(f"Item {key}, created.")
             with open('bitrix/bt_items.json', 'w+', encoding='utf-8') as file:
                 json.dump(ddict, file, ensure_ascii=False, indent=2)
     else:

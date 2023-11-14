@@ -637,8 +637,8 @@ def _get_personal_meta(name):
 def create_item(item: dict):
     url = f'{BASE_URL}entity/product'
     name = item['name']
-    externalCode = item['externalCode']
-    code = item['externalCode']
+    externalCode = str(item['externalCode'])
+    code = str(item['externalCode'])
     article = item['article']
     try:
         salePrice = int(item['salePrice'])
@@ -780,8 +780,8 @@ def check_item(code):
 #Обновление товара
 def update_item(item: dict):
     name = item['name']
-    externalCode = item['externalCode']
-    code = item['externalCode']
+    externalCode = str(item['externalCode'])
+    code = str(item['externalCode'])
     url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={code}'
     objectId = get(url = url, headers=HEADERS).json()['rows'][0]['id']
     url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/{objectId}'
