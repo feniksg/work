@@ -1,8 +1,8 @@
 ﻿import schedule, time, threading
-from testbt import BtUpdater
+from testbt import BtUpdater, Product
 
 def bitrix_up(time_seconds):
-    updater = BtUpdater
+    updater = BtUpdater()
     schedule.every(time_seconds).seconds.do(updater.mainloop)
 
     while True:
