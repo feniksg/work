@@ -1,2 +1,7 @@
 ﻿venv
 __pycache__
+TZ.txt
+*.log
+*.csv
+*.log
+*.pickle

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from ms import create_item, update_item, check_item
-import requests, logging, csv, pickle, os, time
+import requests, logging, csv, pickle, os, time, codecs
 
 @dataclass
 class Product():
@@ -51,7 +51,7 @@ class BtUpdater():
         if filename == '':
             filename = self.csv_filename
         products = {}
-        with open(filename, 'r') as file:
+        with codecs.open(filename, 'r', "utf_8_sig") as file:
             reader = csv.DictReader(file)
             for row in reader:
                 article = row['IP_PROP205']
@@ -133,6 +133,7 @@ class BtUpdater():
             self.logger.info('mainloop. files are equals. skipping...')
         except Exception as e:
             self.logger.info(f'{self.name}. mainloop - function. {e}')
+            print(e)
             self._selfload('pre_mainloop_autosave.pickle')
 
     def _to_sklad(self, item):
