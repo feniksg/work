@@ -55,21 +55,26 @@ class BtUpdater():
             reader = csv.DictReader(file)
             for row in reader:
                 article = row['IP_PROP205']
+                name = row['IE_NAME']
+                if name[-1] == ' ':
+                    name = name[:-1]
                 if article not in products:
                     products[article] = Product(
                         code=int(row['IE_XML_ID']),
-                        name=row['IE_NAME'],
+                        name=name,
                         article=article,
                         price_sell=0 if row['CV_PRICE_1'] == '' else float(row['CV_PRICE_1']),
                         currency=row['CV_CURRENCY_1']
                     )
                 else:
-                    name = row['IE_NAME']
                     for prd in products.items():
                         if prd[1].name == name:
-                            products[prd[0]].price_photo = 0 if row.get('CV_PRICE_2', 0) == '' else float(row.get('CV_PRICE_2', 0))
-                            products[prd[0]].price_party = 0 if row.get('CV_PRICE_3', 0) == '' else float(row.get('CV_PRICE_3', 0))
-                            products[prd[0]].price_old = 0 if row.get('CV_PRICE_4', 0) == '' else float(row.get('CV_PRICE_4', 0))
+                            if not products[prd[0]].price_photo:
+                                products[prd[0]].price_photo = 0 if row.get('CV_PRICE_2', 0) == '' else float(row.get('CV_PRICE_2', 0))
+                            if not products[prd[0]].price_party:
+                                products[prd[0]].price_party = 0 if row.get('CV_PRICE_3', 0) == '' else float(row.get('CV_PRICE_3', 0))
+                            if not products[prd[0]].price_old:
+                                products[prd[0]].price_old = 0 if row.get('CV_PRICE_4', 0) == '' else float(row.get('CV_PRICE_4', 0))
         del products['']
         return list(products.items())
 
