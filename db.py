@@ -2,8 +2,8 @@ from settings import DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME
 import psycopg2
 
 conn = psycopg2.connect(host="localhost",
-                        user="feniksg1",
-                        password="adminADMIN",
+                        user="admin",
+                        password="qwertymama",
                         port="5432",
                         database="my_stock")
 
