@@ -146,6 +146,7 @@ class BtUpdater():
 
     def _update(self) -> None:
         self._selfsave('pre_update_autosave.pickle')
+        print(f'Queue length: {len(self.update_queue)}')
         while len(self.update_queue) != 0:
             item = self.update_queue[0]
             self.update_queue.remove(item)
