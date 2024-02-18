@@ -186,6 +186,8 @@ def set_free(id_product, free: bool):
         value = 'Нет'
     if response.status_code == 200:
         product = response.json()['rows'][0]['meta']['href']
+    else:
+        return
     body = {
        "attributes":[ 
            {
