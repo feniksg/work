@@ -18,9 +18,9 @@ STATES = {
     'Сохранение брони': 'KeepBooking'
 }
 
-BASE_URL = 'https://online.moysklad.ru/api/remap/1.2/'
+BASE_URL = 'https://api.moysklad.ru/api/remap/1.2/'
 
-HEADERS = {"Authorization": f"Bearer {MY_STORAGE_TOKEN}","Content-Type": "application/json", 'encoding': 'utf-8'}
+HEADERS = {"Authorization": f"Bearer {MY_STORAGE_TOKEN}","Content-Type": "application/json", 'encoding': 'utf-8', "Accept-Encoding": "gzip"}
 
 #Получение метаданных статуса заказ
 def _get_metastate(url: str) -> dict:
@@ -78,7 +78,7 @@ def create_inpayment(id_order: int, amount: int):
             {
                 "meta": {
                     "href": order,
-                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata",
+                    "metadataHref": f"{BASE_URL}entity/customerorder/metadata",
                     "type": "customerorder",
                     "mediaType": "application/json"
                 }
@@ -192,7 +192,7 @@ def set_free(id_product, free: bool):
        "attributes":[ 
            {
                "meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/eb2ea822-e9cf-11ed-0a80-1108005d077a",
+                "href": f"{BASE_URL}entity/product/metadata/attributes/eb2ea822-e9cf-11ed-0a80-1108005d077a",
                 "type": "attributemetadata",
                 "mediaType": "application/json"
                 },
@@ -219,7 +219,7 @@ def set_product_comment(id_product, comment):
        "attributes":[ 
            {
                "meta": {
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/6f93b889-e9d0-11ed-0a80-00cb005e9834",
+                    "href": f"{BASE_URL}entity/product/metadata/attributes/6f93b889-e9d0-11ed-0a80-00cb005e9834",
                     "type": "attributemetadata",
                     "mediaType": "application/json"
                 },
@@ -244,7 +244,7 @@ def set_selfprice(link):
         "attributes": [
             {
                 "meta": {
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/3edab5e5-06cc-11ee-0a80-08d500177993",
+                    "href": f"{BASE_URL}entity/product/metadata/attributes/3edab5e5-06cc-11ee-0a80-08d500177993",
                     "type": "attributemetadata",
                     "mediaType": "application/json"
                     },
@@ -285,14 +285,14 @@ def set_all_free():
         data.append({
             "meta": {
                 "href": href,
-                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata",
+                "metadataHref": f"{BASE_URL}entity/product/metadata",
                 "type": "product",
                 "mediaType": "application/json"
             },
             "attributes":[ 
             {
                "meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/eb2ea822-e9cf-11ed-0a80-1108005d077a",
+                "href": f"{BASE_URL}entity/product/metadata/attributes/eb2ea822-e9cf-11ed-0a80-1108005d077a",
                 "type": "attributemetadata",
                 "mediaType": "application/json"
                 },
@@ -300,7 +300,7 @@ def set_all_free():
             },
             {
                "meta": {
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/6f93b889-e9d0-11ed-0a80-00cb005e9834",
+                    "href": f"{BASE_URL}entity/product/metadata/attributes/6f93b889-e9d0-11ed-0a80-00cb005e9834",
                     "type": "attributemetadata",
                     "mediaType": "application/json"
                 },
@@ -371,8 +371,8 @@ def leftovers_plus(id_product):
         'name': str(time.time())[:-3],
         'organization':{       
             "meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/organization/924346d3-6543-11eb-0a80-07f1000909a0",
-                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
+                "href": f"{BASE_URL}entity/organization/924346d3-6543-11eb-0a80-07f1000909a0",
+                "metadataHref": f"{BASE_URL}entity/organization/metadata",
                 "type": "organization",
                 "mediaType": "application/json",
                 "uuidHref": "https://online.moysklad.ru/app/#mycompany/edit?id=924346d3-6543-11eb-0a80-07f1000909a0"
@@ -380,8 +380,8 @@ def leftovers_plus(id_product):
         },
         'store': {
             "meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/store/92608a7b-6543-11eb-0a80-07f1000909a5",
-                "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/store/metadata",
+                "href": f"{BASE_URL}entity/store/92608a7b-6543-11eb-0a80-07f1000909a5",
+                "metadataHref": f"{BASE_URL}entity/store/metadata",
                 "type": "store",
                 "mediaType": "application/json",
                 "uuidHref": "https://online.moysklad.ru/app/#warehouse/edit?id=92608a7b-6543-11eb-0a80-07f1000909a5"
@@ -394,7 +394,7 @@ def leftovers_plus(id_product):
                 'assortment': {
                     "meta": {
                         "href": product,
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata",
+                        "metadataHref": f"{BASE_URL}entity/product/metadata",
                         "type": "product",
                         "mediaType": "application/json"
                     }
@@ -441,7 +441,7 @@ def set_articles_order(link):
     data = {
         "attributes":[
             {"meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/e47e0fdf-4789-11ee-0a80-08db00172a76",
+                "href": f"{BASE_URL}entity/customerorder/metadata/attributes/e47e0fdf-4789-11ee-0a80-08db00172a76",
                 "type": "attributemetadata",
                 "mediaType": "application/json"
             },
@@ -470,7 +470,7 @@ def set_selfprice_order(link):
     data = {
         "attributes":[
             {"meta": {
-                "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/9aa0e4d5-06dc-11ee-0a80-04860027416b",
+                "href": f"{BASE_URL}entity/customerorder/metadata/attributes/9aa0e4d5-06dc-11ee-0a80-04860027416b",
                 "type": "attributemetadata",
                 "mediaType": "application/json"
             },
@@ -525,7 +525,7 @@ def set_rentable(link):
             "attributes" : [
                 {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/cab054bc-085a-11ee-0a80-10980036abdd",
+                        "href": f"{BASE_URL}entity/customerorder/metadata/attributes/cab054bc-085a-11ee-0a80-10980036abdd",
                         "type": "attributemetadata",
                         "mediaType": "application/json"
                     },
@@ -533,7 +533,7 @@ def set_rentable(link):
                 },
                 {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/cab05654-085a-11ee-0a80-10980036abde",
+                        "href": f"{BASE_URL}entity/customerorder/metadata/attributes/cab05654-085a-11ee-0a80-10980036abde",
                         "type": "attributemetadata",
                         "mediaType": "application/json"
                     },
@@ -553,7 +553,7 @@ def init_all_product_update():
         'attributes':[
             {
                 "meta": {
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/5488026b-0861-11ee-0a80-0486003855c5",
+                    "href": f"{BASE_URL}entity/product/metadata/attributes/5488026b-0861-11ee-0a80-0486003855c5",
                     "type": "attributemetadata",
                     "mediaType": "application/json"
                 },
@@ -592,7 +592,7 @@ def init_all_order_update():
         'attributes':[
             {
                 "meta": {
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/78e3d009-0868-11ee-0a80-07c2003659a8",
+                    "href": f"{BASE_URL}entity/customerorder/metadata/attributes/78e3d009-0868-11ee-0a80-07c2003659a8",
                     "type": "attributemetadata",
                     "mediaType": "application/json"
                 },
@@ -676,7 +676,7 @@ def create_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -684,8 +684,8 @@ def create_item(item: dict):
                 "value" : salePrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -694,7 +694,7 @@ def create_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -702,8 +702,8 @@ def create_item(item: dict):
                 "value" : photoPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json"
                     }
@@ -712,7 +712,7 @@ def create_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -720,8 +720,8 @@ def create_item(item: dict):
                 "value" : partyPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -730,7 +730,7 @@ def create_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -738,8 +738,8 @@ def create_item(item: dict):
                 "value" : oldPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -748,8 +748,8 @@ def create_item(item: dict):
         ],
         "productFolder": {
                 "meta":{
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
-                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/metadata",
+                    "href": f"{BASE_URL}entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
+                    "metadataHref": f"{BASE_URL}entity/productfolder/metadata",
                     "type": "productfolder",
                     "mediaType": "application/json"
                 }
@@ -784,9 +784,9 @@ def update_item(item: dict):
     name = item['name']
     externalCode = str(item['externalCode'])
     code = str(item['externalCode'])
-    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={code}'
+    url = f'{BASE_URL}entity/product/?filter=code={code}'
     objectId = get(url = url, headers=HEADERS).json()['rows'][0]['id']
-    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/{objectId}'
+    url = f'{BASE_URL}entity/product/{objectId}'
     article = item['article']
     try:
         salePrice = int(item['salePrice'])
@@ -822,7 +822,7 @@ def update_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/92624147-6543-11eb-0a80-07f1000909ab",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -830,8 +830,8 @@ def update_item(item: dict):
                 "value" : salePrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -840,7 +840,7 @@ def update_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/df4af656-d499-11ed-0a80-0df40029a0da",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -848,8 +848,8 @@ def update_item(item: dict):
                 "value" : photoPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json"
                     }
@@ -858,7 +858,7 @@ def update_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/df4af77b-d499-11ed-0a80-0df40029a0db",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -866,8 +866,8 @@ def update_item(item: dict):
                 "value" : partyPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -876,7 +876,7 @@ def update_item(item: dict):
             {
                 "priceType": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
+                        "href": f"{BASE_URL}context/companysettings/pricetype/10bfe5e0-b927-11ed-0a80-0d23003adcb4",
                         "type": "pricetype",
                         "mediaType": "application/json"
                     }
@@ -884,8 +884,8 @@ def update_item(item: dict):
                 "value" : oldPrice*100,
                 "currency": {
                     "meta": {
-                        "href": "https://online.moysklad.ru/api/remap/1.2/entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
-                        "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata",
+                        "href": f"{BASE_URL}entity/currency/9260d73b-6543-11eb-0a80-07f1000909aa",
+                        "metadataHref": f"{BASE_URL}entity/currency/metadata",
                         "type": "currency",
                         "mediaType": "application/json",
                     }
@@ -894,8 +894,8 @@ def update_item(item: dict):
         ],
         "productFolder": {
                 "meta":{
-                    "href": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
-                    "metadataHref": "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/metadata",
+                    "href": f"{BASE_URL}entity/productfolder/583f7744-d1df-11ed-0a80-0053005e66e5",
+                    "metadataHref": f"{BASE_URL}entity/productfolder/metadata",
                     "type": "productfolder",
                     "mediaType": "application/json"
                 }
