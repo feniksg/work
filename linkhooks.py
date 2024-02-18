@@ -15,7 +15,7 @@ def link_webhook(target, type = 'customerorder'):
         "action": "CREATE",
         "entityType": type
     }
-    url = "https://online.moysklad.ru/api/remap/1.2/entity/webhook"
+    url = "https://api.moysklad.ru/api/remap/1.2/entity/webhook"
     r = post(url = url, headers=headers, json = body)
     if r.status_code == 200:
         print("[Create order] Webhook created")
@@ -73,7 +73,7 @@ def delete_webhooks():
         "Authorization": f"Bearer {MY_STORAGE_TOKEN}",
         "Content-Type": "application/json"
     }
-    url = 'https://online.moysklad.ru/api/remap/1.2/entity/webhook'
+    url = 'https://api.moysklad.ru/api/remap/1.2/entity/webhook'
     r = get(url = url, headers= headers)
     metas = []
     body = []

@@ -85,11 +85,11 @@ def create_inpayment(id_order: int, amount: int):
             }
         ],
     }
-    url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin/new'
+    url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin/new'
     data = put(url=url, headers=HEADERS, json=data).json()
     data['operations'][0]['linkedSum'] = amount
     data['sum'] = amount
-    url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin'
+    url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin'
     response = post(url=url, headers=HEADERS, json=data)
     return 'ok'
 
@@ -310,7 +310,7 @@ def set_all_free():
             ]
         })
     
-    url = 'https://online.moysklad.ru/api/remap/1.2/entity/product'
+    url = 'https://api.moysklad.ru/api/remap/1.2/entity/product'
     n = len(data) // 1000
     # print(n)
     for i in range(n):
@@ -402,7 +402,7 @@ def leftovers_plus(id_product):
             }
         ]
     }
-    url = 'https://online.moysklad.ru/api/remap/1.2/entity/enter'
+    url = 'https://api.moysklad.ru/api/remap/1.2/entity/enter'
     r = post(url = url, headers=HEADERS, json=body)
     if r.status_code == 200:
         return 'OK'
@@ -411,14 +411,14 @@ def leftovers_plus(id_product):
 
 #Получить артикул товара
 def _get_article(product_id):
-    url = f'https://online.moysklad.ru/api/remap/1.2/entity/product/?filter=code={product_id}'
+    url = f'https://api.moysklad.ru/api/remap/1.2/entity/product/?filter=code={product_id}'
     article = get(url, headers=HEADERS).json()['rows'][0]['article']
     return article
 
 #Получить список артикулов в заказе
 def get_articles_from_order(order_id):
     result = []
-    url = f'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/?filter=name={order_id}'
+    url = f'https://api.moysklad.ru/api/remap/1.2/entity/customerorder/?filter=name={order_id}'
     r = get(url, headers=HEADERS).json()['rows'][0]['meta']['href']
     positions = put_main_data(r)[0][-1]
     for pos in positions:
@@ -628,7 +628,7 @@ def init_all_order_update():
 
 #Получить метаданные администратора
 def _get_personal_meta(name):
-    url = f'https://online.moysklad.ru/api/remap/1.2/entity/customentity/c62355f1-006a-11ee-0a80-06df000b2730/?filter=name={name}'
+    url = f'https://api.moysklad.ru/api/remap/1.2/entity/customentity/c62355f1-006a-11ee-0a80-06df000b2730/?filter=name={name}'
     responce = get(url, headers=HEADERS).json()['rows'][0]['meta']
     name = get(responce['href'], headers=HEADERS).json()['name']
     data = {'meta':responce, 'name': name}
@@ -916,7 +916,7 @@ def update_item(item: dict):
 if __name__ == '__main__': 
     # init_all_product_update()
     # init_all_order_update()
-    # link = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
+    # link = 'https://api.moysklad.ru/api/remap/1.2/entity/customerorder/3d4fd443-05e5-11ee-0a80-06f200099524'
     # set_selfprice_order(link)
     # print(set_rentable(link))
     ...
