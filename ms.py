@@ -315,6 +315,7 @@ def set_all_free():
     # print(n)
     for i in range(n):
         r = post(url=url, headers=HEADERS, json=data[1000*i:1000*(i+1)])
+        time.sleep(20)
     r = post(url=url, headers=HEADERS, json=data[1000*(i+1):])    
     if r.status_code == 200:
         return 'OK'
@@ -360,6 +361,7 @@ def write_active_rents(data: dict):
             text+=f'{start} - {end} | {fio} | {phone}\n'
         set_product_comment(product, text)
         set_free(product, False)
+        time.sleep(3)
 
 #Увеличить количество товара в остатках        
 def leftovers_plus(id_product):
