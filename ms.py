@@ -361,7 +361,7 @@ def write_active_rents(data: dict):
             text+=f'{start} - {end} | {fio} | {phone}\n'
         set_product_comment(product, text)
         set_free(product, False)
-        time.sleep(3)
+        time.sleep(5)
 
 #Увеличить количество товара в остатках        
 def leftovers_plus(id_product):
